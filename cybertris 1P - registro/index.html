@@ -353,6 +353,7 @@
         const gameContainer = document.getElementById('gameContainer');
         const saveScoreScreen = document.getElementById('save-score-screen');
         const rankingScreen = document.getElementById('ranking-screen');
+        const adminScreen = document.getElementById('admin-screen');
         const allScreens = [startScreen, gameContainer, saveScoreScreen, rankingScreen, adminScreen];
 
         const startGameButton = document.getElementById('startGameButton');
@@ -385,7 +386,6 @@
         const rankingLoading = document.getElementById('ranking-loading');
         const playAgainButton = document.getElementById('playAgainButton');
         const adminAccessLink = document.getElementById('adminAccessLink');
-        const adminScreen = document.getElementById('admin-screen');
         const adminLogin = document.getElementById('admin-login');
         const adminData = document.getElementById('admin-data');
         const adminPasswordInput = document.getElementById('adminPasswordInput');
@@ -1212,7 +1212,7 @@
         }
         
       function returnToStartScreen() { 
-    window.location.href = 'c1p.html';
+    window.location.href = './';
         }
         
         function showSaveScoreScreen() {
