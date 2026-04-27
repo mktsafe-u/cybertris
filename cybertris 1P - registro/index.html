@@ -75,9 +75,11 @@
         #start-screen .logo-container { margin-bottom: 10px; }
         #start-screen .logo-container img { max-height: 38px; border-radius: 8px; }
         .intro-heading { font-size: 1.4em; color: var(--color-primary); margin-bottom: 10px; }
-        .intro-section { display: flex; align-items: center; justify-content: flex-start; gap: 12px; margin-bottom: 10px; font-size: 1.1em; width: 88%; }
+        .intro-section { display: flex; align-items: center; justify-content: flex-start; gap: 12px; margin-bottom: 22px; font-size: 1.1em; width: 88%; }
+        .intro-section:last-of-type { margin-bottom: 8px; }
         .intro-section svg, .intro-section .intro-icon-img { width: 26px; height: 26px; flex-shrink: 0; object-fit: contain; }
         .intro-section p { margin: 0; text-align: left; line-height: 1.4; }
+        #startGameButton { margin-top: 28px; }
         .action-button { background-color: var(--color-primary); color: var(--color-tertiary-neon); border: 2px solid var(--color-tertiary-neon); padding: 12px 28px; font-size: 1.5em; cursor: pointer; border-radius: 8px; transition: background-color 0.2s, box-shadow 0.2s; font-family: 'VT323', monospace; box-shadow: 0 0 10px var(--color-tertiary-neon); margin-top: 14px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
         .action-button:hover { background-color: var(--color-tertiary-bright-blue); box-shadow: 0 0 15px var(--color-tertiary-neon), 0 0 20px var(--color-tertiary-neon); }
         .action-button:active { transform: scale(0.96); }
@@ -189,20 +191,24 @@
             .controls button { height: 52px; font-size: 1.6em; }
         }
 
-        #message-box, #save-score-screen { 
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            background-color: rgba(9, 11, 82, 0.95); padding: 30px; border-radius: 10px; 
-            text-align: center; z-index: 1000; font-size: 1.6em; line-height:1.4; 
-            border: 2px solid var(--color-danger); box-shadow: 0 0 20px var(--color-danger); 
-            color: var(--color-danger); 
+        #message-box, #save-score-screen {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background-color: rgba(9, 11, 82, 0.95); padding: 24px 22px; border-radius: 10px;
+            text-align: center; z-index: 1000; font-size: 1.4em; line-height: 1.4;
+            border: 2px solid var(--color-danger); box-shadow: 0 0 20px var(--color-danger);
+            color: var(--color-danger);
+            width: 92%; max-width: 460px; max-height: 92vh; overflow-y: auto;
+            box-sizing: border-box;
         }
+        #message-box p { margin: 8px 0; }
+        #message-box .message-buttons { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 18px; }
         #message-box { display: none; }
         #message-box.paused, #save-score-screen { border-color: var(--color-primary); box-shadow: 0 0 20px var(--color-primary); color: var(--color-tertiary-neon); }
-        #message-box button, #save-score-screen button { 
-            background-color: var(--color-primary); color: var(--color-tertiary-neon); 
-            border: 1px solid var(--color-tertiary-neon); padding: 10px 20px; 
-            font-size: 0.8em; cursor: pointer; border-radius: 5px; margin-top: 20px; 
-            font-family: 'VT323', monospace;
+        #message-box button, #save-score-screen button {
+            background-color: var(--color-primary); color: var(--color-tertiary-neon);
+            border: 1px solid var(--color-tertiary-neon); padding: 10px 24px;
+            font-size: 0.85em; cursor: pointer; border-radius: 6px; margin: 0;
+            font-family: 'VT323', monospace; min-width: 180px;
             transition: background-color 0.3s, box-shadow 0.3s;
         }
         #message-box button:hover, #save-score-screen button:hover { background-color: var(--color-tertiary-bright-blue); }
@@ -225,14 +231,6 @@
         .loading-text { color: var(--color-tertiary-neon); font-size: 1.3em; margin-top: 12px; animation: blink 1s step-end infinite; }
         @keyframes blink { 50% { opacity: 0.3; } }
         .error-text { color: var(--color-danger); font-size: 1.1em; margin-top: 8px; }
-        #admin-screen { max-width: 720px; }
-        #admin-table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
-        #admin-table th { background-color: var(--color-primary); color: var(--color-tertiary-neon); padding: 8px 6px; text-align: left; }
-        #admin-table td { padding: 6px; border-bottom: 1px solid rgba(0,84,242,0.3); text-align: left; word-break: break-all; }
-        #admin-table tr:nth-child(even) td { background-color: rgba(9,11,82,0.6); }
-        #admin-table-container { overflow-x: auto; width: 100%; margin-top: 15px; }
-        .admin-link { font-size: 0.85em; color: rgba(3,255,158,0.35); margin-top: 18px; cursor: pointer; text-decoration: underline; }
-        .admin-link:hover { color: var(--color-tertiary-neon); }
 
         #ranking-list { list-style: none; padding: 0; margin-top: 20px; width: 100%; max-width: 400px; }
         #ranking-list li { display: flex; justify-content: space-between; padding: 5px 10px; margin-bottom: 5px; background-color: rgba(9, 11, 82, 0.5); border-radius: 5px; font-size: 1.2em;}
@@ -349,29 +347,6 @@
         <button id="playAgainButton" class="action-button">Jugar de Nuevo</button>
     </div>
 
-    <div id="admin-screen" class="screen">
-        <h1>Panel Admin</h1>
-        <div id="admin-login">
-            <p style="font-size:1.2em;">Contraseña:</p>
-            <input type="password" id="adminPasswordInput" class="score-input" placeholder="Contraseña" style="margin-top:8px;" />
-            <p id="admin-login-error" class="error-text" style="display:none;">Contraseña incorrecta</p>
-            <button id="adminLoginButton" class="action-button" style="margin-top:15px;">Ingresar</button>
-            <button id="adminBackButton" class="action-button" style="margin-top:10px; background:transparent; border-color:rgba(3,255,158,0.4); color:rgba(3,255,158,0.6); font-size:1.2em;">Volver</button>
-        </div>
-        <div id="admin-data" style="display:none; width:100%;">
-            <p id="admin-loading" class="loading-text">Cargando datos...</p>
-            <div id="admin-table-container" style="display:none;">
-                <table id="admin-table">
-                    <thead>
-                        <tr><th>#</th><th>Nombre</th><th>Apellido</th><th>Email</th><th>Puntaje</th><th>Fecha</th></tr>
-                    </thead>
-                    <tbody id="admin-table-body"></tbody>
-                </table>
-            </div>
-            <button id="exportCsvButton" class="action-button" style="margin-top:15px; display:none;">Exportar CSV</button>
-            <button id="adminLogoutButton" class="action-button" style="margin-top:10px; background:transparent; border-color:rgba(3,255,158,0.4); color:rgba(3,255,158,0.6); font-size:1.2em;">Volver al Inicio</button>
-        </div>
-    </div>
 
     <div id="attackWarning" class="dynamic-message"></div>
     <div id="secureMessage" class="dynamic-message"></div>
@@ -389,8 +364,7 @@
         const gameContainer = document.getElementById('gameContainer');
         const saveScoreScreen = document.getElementById('save-score-screen');
         const rankingScreen = document.getElementById('ranking-screen');
-        const adminScreen = document.getElementById('admin-screen');
-        const allScreens = [startScreen, gameContainer, saveScoreScreen, rankingScreen, adminScreen];
+        const allScreens = [startScreen, gameContainer, saveScoreScreen, rankingScreen];
 
         const startGameButton = document.getElementById('startGameButton');
         const canvas = document.getElementById('cyberTrisCanvas');
@@ -421,17 +395,6 @@
         const rankingList = document.getElementById('ranking-list');
         const rankingLoading = document.getElementById('ranking-loading');
         const playAgainButton = document.getElementById('playAgainButton');
-        const adminLogin = document.getElementById('admin-login');
-        const adminData = document.getElementById('admin-data');
-        const adminPasswordInput = document.getElementById('adminPasswordInput');
-        const adminLoginError = document.getElementById('admin-login-error');
-        const adminLoginButton = document.getElementById('adminLoginButton');
-        const adminBackButton = document.getElementById('adminBackButton');
-        const adminLoading = document.getElementById('admin-loading');
-        const adminTableContainer = document.getElementById('admin-table-container');
-        const adminTableBody = document.getElementById('admin-table-body');
-        const exportCsvButton = document.getElementById('exportCsvButton');
-        const adminLogoutButton = document.getElementById('adminLogoutButton');
 
         const attackImageElements = {
             PhishingThreatImage: document.getElementById('PhishingThreatImage'),
@@ -480,8 +443,8 @@
             appId:             "1:362260009473:web:05fff8a2e6b6aa86fae600",
             measurementId:     "G-114N25VR9N"
         };
-        const ADMIN_PASSWORD = "cybertris2024"; // Cambiá esta contraseña
-        const SCORES_COLLECTION = "cybertris_scores";
+        const SCORES_COLLECTION = "cybertris_scores";   // Datos completos (privados, solo Firebase Console)
+        const RANKING_COLLECTION = "cybertris_ranking";  // Datos limitados (públicos, para el ranking)
 
         let db = null;
         function initFirebase() {
@@ -1295,16 +1258,24 @@
             saveLoadingText.style.display = 'block';
 
             try {
-                const colRef = db.collection(SCORES_COLLECTION);
-                const existing = await colRef.where('email', '==', email).get();
-                if (!existing.empty) {
-                    const doc = existing.docs[0];
-                    if (finalScoreForRanking > doc.data().score) {
-                        await doc.ref.update({ score: finalScoreForRanking, nombre, apellido, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-                    }
-                } else {
-                    await colRef.add({ nombre, apellido, email, score: finalScoreForRanking, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-                }
+                const ts = firebase.firestore.FieldValue.serverTimestamp();
+                const docId = email; // doc ID = email (único por jugador)
+
+                // Datos completos (privados): nombre, apellido, email, score
+                const fullDoc = { nombre, apellido, email, score: finalScoreForRanking, timestamp: ts };
+                // Datos públicos del ranking (sin email)
+                const rankDoc = { nombre, apellido, score: finalScoreForRanking, timestamp: ts };
+
+                // Las reglas de Firestore se encargan de aceptar solo si el score nuevo >= al existente
+                const writes = [
+                    db.collection(SCORES_COLLECTION).doc(docId).set(fullDoc).catch(e => {
+                        if (e.code !== 'permission-denied') throw e; // permission-denied = score menor, está OK
+                    }),
+                    db.collection(RANKING_COLLECTION).doc(docId).set(rankDoc).catch(e => {
+                        if (e.code !== 'permission-denied') throw e;
+                    })
+                ];
+                await Promise.all(writes);
                 displayRanking();
             } catch(e) {
                 console.error(e);
@@ -1323,7 +1294,7 @@
             rankingLoading.style.display = 'block';
 
             try {
-                const snapshot = await db.collection(SCORES_COLLECTION)
+                const snapshot = await db.collection(RANKING_COLLECTION)
                     .orderBy('score', 'desc').limit(10).get();
                 rankingLoading.style.display = 'none';
                 rankingList.innerHTML = '';
@@ -1372,7 +1343,7 @@
         
         function updateMenuButtons() {
             // Limpiar TODAS las selecciones anteriores de TODOS los botones posibles
-            [startGameButton, restartButton, saveScoreButton, resumeButton, submitScoreButton, playAgainButton, adminLoginButton, adminBackButton, adminLogoutButton].forEach(btn => {
+            [startGameButton, restartButton, saveScoreButton, resumeButton, submitScoreButton, playAgainButton].forEach(btn => {
                 if (btn) btn.classList.remove('gamepad-selected');
             });
             
@@ -1588,71 +1559,6 @@
             }
         }
 
-        // --- Admin Panel ---
-        function showAdminScreen() {
-            allScreens.forEach(s => s.style.display = 'none');
-            messageBox.style.display = 'none';
-            adminScreen.style.display = 'flex';
-            adminLogin.style.display = 'flex';
-            adminData.style.display = 'none';
-            adminPasswordInput.value = '';
-            adminLoginError.style.display = 'none';
-            adminPasswordInput.focus();
-            updateMenuButtons();
-        }
-
-        function adminLogin_submit() {
-            if (adminPasswordInput.value === ADMIN_PASSWORD) {
-                adminLogin.style.display = 'none';
-                adminData.style.display = 'flex';
-                adminData.style.flexDirection = 'column';
-                adminData.style.alignItems = 'center';
-                loadAdminData();
-            } else {
-                adminLoginError.style.display = 'block';
-                adminPasswordInput.value = '';
-            }
-        }
-
-        async function loadAdminData() {
-            adminLoading.style.display = 'block';
-            adminTableContainer.style.display = 'none';
-            exportCsvButton.style.display = 'none';
-            try {
-                const snapshot = await db.collection(SCORES_COLLECTION)
-                    .orderBy('score', 'desc').get();
-                adminLoading.style.display = 'none';
-                adminTableBody.innerHTML = '';
-                let adminIndex = 0;
-                snapshot.forEach((doc) => {
-                    const s = doc.data();
-                    const date = s.timestamp ? new Date(s.timestamp.toDate()).toLocaleDateString('es-AR') : '-';
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${adminIndex+1}</td><td>${s.nombre||''}</td><td>${s.apellido||''}</td><td>${s.email||''}</td><td>${s.score||0}</td><td>${date}</td>`;
-                    adminTableBody.appendChild(tr);
-                    adminIndex++;
-                });
-                adminTableContainer.style.display = 'block';
-                exportCsvButton.style.display = 'inline-block';
-            } catch(e) {
-                adminLoading.textContent = 'Error al cargar datos.';
-            }
-        }
-
-        function exportCsv() {
-            const rows = [['#','Nombre','Apellido','Email','Puntaje','Fecha']];
-            adminTableBody.querySelectorAll('tr').forEach((tr, i) => {
-                const cells = [...tr.querySelectorAll('td')].map(td => `"${td.textContent}"`);
-                rows.push(cells);
-            });
-            const csv = rows.map(r => r.join(',')).join('\n');
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url; a.download = 'cybertris_scores.csv'; a.click();
-            URL.revokeObjectURL(url);
-        }
-
         // --- Keyboard and Button Listeners ---
         function initializeEventListeners() {
             startGameButton.addEventListener('click', initializeGame);
@@ -1660,11 +1566,6 @@
             saveScoreButton.addEventListener('click', showSaveScoreScreen);
             submitScoreButton.addEventListener('click', saveScore);
             playAgainButton.addEventListener('click', returnToStartScreen);
-            adminLoginButton.addEventListener('click', adminLogin_submit);
-            adminPasswordInput.addEventListener('keydown', e => { if (e.key === 'Enter') adminLogin_submit(); });
-            adminBackButton.addEventListener('click', () => showScreen('ranking-screen'));
-            adminLogoutButton.addEventListener('click', returnToStartScreen);
-            exportCsvButton.addEventListener('click', exportCsv);
 
             resumeButton.addEventListener('click', togglePause);
             
