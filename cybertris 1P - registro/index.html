@@ -23,7 +23,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Permissions-Policy" content="gamepad=*">
     <title>CyberTris v5.0</title>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
@@ -50,92 +50,144 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start; /* Alinea arriba para móviles */
+            justify-content: center;
             min-height: 100vh;
             margin: 0;
-            overflow-y: auto; /* Permite scroll vertical */
-            padding: 20px 10px;
+            overflow-y: auto;
+            overscroll-behavior: none;
+            padding: 10px;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
         }
         .screen {
-            display: none; /* Todas las pantallas principales ocultas por defecto */
+            display: none;
             flex-direction: column; align-items: center; justify-content: center; text-align: center;
-            padding: 20px 30px 30px 30px; background-color: var(--color-secondary); border: 3px solid var(--color-primary);
+            padding: 16px 20px 20px; background-color: var(--color-secondary); border: 3px solid var(--color-primary);
             border-radius: 15px; box-shadow: 0 0 25px var(--color-primary), inset 0 0 15px var(--color-primary);
-            width: 95%;
-            max-width: 550px; 
+            width: 95%; max-width: 550px;
+            max-height: 96vh; overflow-y: auto; box-sizing: border-box;
         }
         #start-screen { display: flex; }
 
-        #start-screen h1, #ranking-screen h1 { font-size: 3.5em; color: var(--color-tertiary-neon); text-shadow: 0 0 8px var(--color-tertiary-neon); margin-bottom: 15px; }
-        #start-screen .logo-container { margin-bottom: 20px; }
-        #start-screen .logo-container img { max-height: 45px; border-radius: 8px; }
-        .intro-heading { font-size: 1.8em; color: var(--color-primary); margin-bottom: 15px; }
-        .intro-section { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px; font-size: 1.2em; max-width: 480px; }
-        .intro-section svg, .intro-section .intro-icon-img { width: 30px; height: 30px; flex-shrink: 0; object-fit: contain; }
-        .intro-section p { margin: 0; text-align: left; line-height: 1.5; }
-        .call-to-action { font-size: 1.3em; margin-top: 10px; margin-bottom: 25px; color: var(--color-tertiary-neon); }
-        .action-button { background-color: var(--color-primary); color: var(--color-tertiary-neon); border: 2px solid var(--color-tertiary-neon); padding: 15px 30px; font-size: 1.6em; cursor: pointer; border-radius: 8px; transition: background-color 0.3s, box-shadow 0.3s; font-family: 'VT323', monospace; box-shadow: 0 0 10px var(--color-tertiary-neon); margin-top: 20px; }
+        #start-screen h1, #ranking-screen h1 { font-size: 2.8em; color: var(--color-tertiary-neon); text-shadow: 0 0 8px var(--color-tertiary-neon); margin-bottom: 8px; }
+        #start-screen .logo-container { margin-bottom: 10px; }
+        #start-screen .logo-container img { max-height: 38px; border-radius: 8px; }
+        .intro-heading { font-size: 1.4em; color: var(--color-primary); margin-bottom: 10px; }
+        .intro-section { display: flex; align-items: center; justify-content: flex-start; gap: 12px; margin-bottom: 10px; font-size: 1.1em; width: 88%; }
+        .intro-section svg, .intro-section .intro-icon-img { width: 26px; height: 26px; flex-shrink: 0; object-fit: contain; }
+        .intro-section p { margin: 0; text-align: left; line-height: 1.4; }
+        .action-button { background-color: var(--color-primary); color: var(--color-tertiary-neon); border: 2px solid var(--color-tertiary-neon); padding: 12px 28px; font-size: 1.5em; cursor: pointer; border-radius: 8px; transition: background-color 0.2s, box-shadow 0.2s; font-family: 'VT323', monospace; box-shadow: 0 0 10px var(--color-tertiary-neon); margin-top: 14px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
         .action-button:hover { background-color: var(--color-tertiary-bright-blue); box-shadow: 0 0 15px var(--color-tertiary-neon), 0 0 20px var(--color-tertiary-neon); }
+        .action-button:active { transform: scale(0.96); }
 
-        .game-container { 
-            display: none; 
+        .game-container {
+            display: none;
             flex-direction: column;
             align-items: center;
-            gap: 20px; 
-            padding: 10px; 
-            border: 3px solid var(--color-tertiary-neon); 
-            border-radius: 15px; 
-            background-color: rgba(41, 48, 51, 0.7); 
-            box-shadow: 0 0 20px var(--color-tertiary-neon), inset 0 0 10px var(--color-tertiary-neon); 
-            width: auto;
+            gap: 6px;
+            padding: 8px;
+            border: 3px solid var(--color-tertiary-neon);
+            border-radius: 15px;
+            background-color: rgba(41, 48, 51, 0.7);
+            box-shadow: 0 0 20px var(--color-tertiary-neon), inset 0 0 10px var(--color-tertiary-neon);
+            width: 100%;
             max-width: 95vw;
             box-sizing: border-box;
+            touch-action: none;
         }
-        canvas { 
-            border: 2px solid var(--color-primary); 
-            border-radius: 8px; 
-            background-color: var(--color-secondary); 
+        canvas {
+            border: 2px solid var(--color-primary);
+            border-radius: 8px;
+            background-color: var(--color-secondary);
             box-shadow: inset 0 0 10px #000;
-            flex-shrink: 1;
-            min-width: 100px;
+            display: block;
         }
-        .info-panel { 
-            text-align: center; 
-            padding: 10px 20px; 
-            background-color: rgba(9, 11, 82, 0.85); 
-            border-radius: 8px; 
-            border: 1px solid var(--color-tertiary-neon); 
-            min-width: 180px;
-            display: flex; 
-            flex-direction: column; 
+        /* Info panel: compact horizontal strip on mobile */
+        .info-panel {
+            display: flex;
+            flex-direction: row;
             align-items: center;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 4px;
+            padding: 5px 10px;
+            background-color: rgba(9, 11, 82, 0.85);
+            border-radius: 8px;
+            border: 1px solid var(--color-tertiary-neon);
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .info-panel h2 { display: none; }
+        .info-panel p { font-size: 1.1em; margin: 0; white-space: nowrap; }
+        .info-panel .logo-ingame { display: none; }
+        .info-panel .content-top { display: flex; flex-direction: row; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center; }
+
+        /* Controls: single row of 4 buttons */
+        .controls {
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            touch-action: none;
+        }
+        .controls button {
+            flex: 1;
+            background-color: var(--color-primary); color: var(--color-tertiary-neon);
+            border: 2px solid var(--color-tertiary-neon);
+            height: 64px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8em; cursor: pointer; border-radius: 10px;
+            font-family: 'VT323', monospace; box-shadow: 0 0 5px var(--color-tertiary-neon);
+            touch-action: none;
+            -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.1s, transform 0.1s;
+        }
+        .controls button:active, .controls button.pressed {
+            background-color: var(--color-tertiary-bright-blue);
+            transform: scale(0.93);
+            box-shadow: 0 0 12px var(--color-tertiary-neon);
+        }
+        .rotate-icon { width: 55%; height: 55%; }
+
+        /* game-area: wraps canvas + controls on mobile, column layout */
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
             width: 100%;
         }
-        .info-panel .content-top { margin-bottom: auto; }
-        .info-panel h2 { font-size: 1.8em; margin-bottom: 10px; color: var(--color-tertiary-neon); text-shadow: 0 0 5px var(--color-tertiary-neon); }
-        .info-panel p { font-size: 1.4em; margin: 5px 0; }
-        .info-panel .logo-ingame { margin-top: auto; padding-top: 15px; }
-        .info-panel .logo-ingame img { max-height: 22px; border-radius: 4px; opacity: 0.7; }
 
-        .controls { 
-            display: grid; 
-            grid-template-areas: "left rotate right" ". down ."; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 8px; 
-            margin-top: 15px; 
-            width: 100%; 
-            max-width: 200px;
+        /* Desktop layout */
+        @media (min-width: 768px) {
+            body { padding: 20px 10px; overflow: auto; }
+            .game-container {
+                flex-direction: row;
+                align-items: flex-start;
+                gap: 20px;
+                width: auto;
+            }
+            .game-area { width: auto; }
+            .info-panel {
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: center;
+                width: 180px;
+                min-width: 180px;
+                padding: 10px 20px;
+                order: 2;
+            }
+            .info-panel h2 { display: block; font-size: 1.8em; margin-bottom: 10px; color: var(--color-tertiary-neon); text-shadow: 0 0 5px var(--color-tertiary-neon); }
+            .info-panel p { font-size: 1.4em; margin: 5px 0; }
+            .info-panel .content-top { flex-direction: column; gap: 0; margin-bottom: auto; }
+            .info-panel .logo-ingame { display: block; margin-top: auto; padding-top: 15px; }
+            .info-panel .logo-ingame img { max-height: 22px; border-radius: 4px; opacity: 0.7; }
+            .controls { max-width: 100%; width: 100%; margin-top: 12px; }
+            .controls button { height: 52px; font-size: 1.6em; }
         }
-        .controls button { 
-            background-color: var(--color-primary); color: var(--color-tertiary-neon); border: 2px solid var(--color-tertiary-neon); 
-            width: 55px; height: 55px; display: flex; align-items: center; justify-content: center;
-            font-size: 1.8em; cursor: pointer; border-radius: 8px; transition: background-color 0.3s, box-shadow 0.3s; 
-            font-family: 'VT323', monospace; box-shadow: 0 0 5px var(--color-tertiary-neon); 
-        }
-        .controls button:hover { background-color: var(--color-tertiary-bright-blue); box-shadow: 0 0 10px var(--color-tertiary-neon), 0 0 15px var(--color-tertiary-neon); }
-        #leftButton { grid-area: left; } #rotateButton { grid-area: rotate; } #rightButton { grid-area: right; } #downButton { grid-area: down; }
-        .rotate-icon { width: 60%; height: 60%; }
 
         #message-box, #save-score-screen { 
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
@@ -206,18 +258,6 @@
             text-shadow: 1px 1px 0px var(--color-secondary), -1px -1px 0px var(--color-secondary), 1px -1px 0px var(--color-secondary), -1px 1px 0px var(--color-secondary), 0 0 8px var(--color-success);
         }
 
-        @media (min-width: 768px) {
-            body { justify-content: center; }
-            .game-container { 
-                flex-direction: row; 
-                align-items: stretch; 
-                gap: 30px;
-            }
-            .info-panel {
-                width: auto;
-                justify-content: space-between;
-            }
-        }
 
         .piece-I { background-color: var(--color-primary); }
         .piece-L { background-color: var(--color-tertiary-bright-blue); }
@@ -240,30 +280,30 @@
         <h2 class="intro-heading">¡Defiende tu Infraestructura Digital!</h2>
         <div class="intro-section">
             <svg class="intro-icon" fill="var(--color-primary)" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 0L1 4V11C1 13.45 2.89 15.67 5.39 16.56L10 18L14.61 16.56C17.11 15.67 19 13.45 19 11V4L10 0ZM10 2.17L17 5.11V11C17 12.5 16.06 13.89 14.66 14.44L10 15.82L5.34 14.44C3.94 13.89 3 12.5 3 11V5.11L10 2.17Z"/></svg>
-            <p>Cada pieza es un <strong>sistema a asegurar</strong>. ¡Encájalas correctamente!</p>
-        </div>
-        <div class="intro-section">
-            <svg class="intro-icon" fill="var(--color-danger)" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M0 18H20L10 0L0 18ZM11 15H9V13H11V15ZM11 12H9V7H11V12Z"/></svg>
-            <p>Los huecos son <strong>vulnerabilidades</strong>. ¡Evita que se acumulen y comprometan tu seguridad!</p>
+            <p>Acomodá rápido las piezas y preparate para recibir ataques.</p>
         </div>
         <div class="intro-section">
             <img id="introAntivirusIcon" src="icon-safe-u.png" alt="Antivirus Icon" class="intro-icon-img">
-            <p><strong>Safe-U</strong> estará allí para ayudarte a combatir las amenazas.</p>
+            <p>Safe-U estará allí para ayudarte a combatirlos.</p>
         </div>
-        <p class="call-to-action">¡Organiza tus defensas y no dejes que las amenazas se apilen!</p>
         <button id="startGameButton" class="action-button">Iniciar Juego</button>
     </div>
 
     <div class="game-container" id="gameContainer">
-        <canvas id="cyberTrisCanvas"></canvas>
         <div class="info-panel">
             <div class="content-top">
                 <h2>CyberTris</h2>
-                <p>Puntaje: <span id="score">0</span></p>
+                <p>Pts: <span id="score">0</span></p>
                 <p>Líneas: <span id="lines">0</span></p>
-                <p>Nivel: <span id="level">1</span></p>
-                <p>Ataques Prevenidos: <span id="powerUpCount">0</span></p>
+                <p>Nv: <span id="level">1</span></p>
+                <p>🛡️ <span id="powerUpCount">0</span></p>
             </div>
+            <div class="logo-ingame">
+                <img id="safeULogoInGame" src="logo-safe-u.png" alt="Safe-U Logo">
+            </div>
+        </div>
+        <div class="game-area">
+            <canvas id="cyberTrisCanvas"></canvas>
             <div class="controls">
                 <button id="leftButton" aria-label="Izquierda">←</button>
                 <button id="rotateButton" aria-label="Rotar">
@@ -271,11 +311,8 @@
                         <path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"></path>
                     </svg>
                 </button>
-                <button id="rightButton" aria-label="Derecha">→</button>
                 <button id="downButton" aria-label="Abajo">↓</button>
-            </div>
-            <div class="logo-ingame">
-                <img id="safeULogoInGame" src="logo-safe-u.png" alt="Safe-U Logo">
+                <button id="rightButton" aria-label="Derecha">→</button>
             </div>
         </div>
     </div>
@@ -310,7 +347,6 @@
         <ol id="ranking-list"></ol>
         <p id="ranking-loading" class="loading-text" style="display:none;">Cargando...</p>
         <button id="playAgainButton" class="action-button">Jugar de Nuevo</button>
-        <p class="admin-link" id="adminAccessLink">admin</p>
     </div>
 
     <div id="admin-screen" class="screen">
@@ -506,14 +542,17 @@
         function getCssVariableValue(varName) { return getComputedStyle(document.documentElement).getPropertyValue(varName.startsWith('--') ? varName : `--${varName}`).trim(); }
         
         function calculateBlockSize() {
-            const maxCanvasHeight = window.innerHeight * 0.85;
-            const availableWidth = window.innerWidth - 40;
-            let canvasPortion = 0.65;
-            if (window.innerWidth < 768) {
-                canvasPortion = 1;
+            const isMobile = window.innerWidth < 768;
+            let maxH, maxW;
+            if (isMobile) {
+                maxH = window.innerHeight - 185; // info bar + controls + gaps + padding
+                maxW = window.innerWidth - 22;
+            } else {
+                maxH = window.innerHeight - 80;
+                maxW = window.innerWidth * 0.55; // ~55% for canvas, rest for info panel
             }
-            const maxCanvasWidth = availableWidth * canvasPortion;
-            BLOCK_SIZE = Math.floor(Math.min(maxCanvasHeight / ROWS, maxCanvasWidth / COLS, 35));
+            BLOCK_SIZE = Math.floor(Math.min(maxH / ROWS, maxW / COLS));
+            BLOCK_SIZE = Math.max(Math.min(BLOCK_SIZE, isMobile ? 28 : 35), 18);
             canvas.width = COLS * BLOCK_SIZE;
             canvas.height = ROWS * BLOCK_SIZE;
         }
@@ -1169,12 +1208,14 @@
             }
             
             // DIBUJAR SIEMPRE
-            draw(); 
+            if (!window._loopLogged) { window._loopLogged = true; console.log('[CyberTris] Game loop reached draw() - player.matrix:', !!player.matrix, 'pos:', player.pos); }
+            draw();
         }
 
-        function initializeGame() { 
-            board = createBoard(); 
-            score = 0; 
+        function initializeGame() {
+            console.log('[CyberTris] initializeGame called');
+            board = createBoard();
+            score = 0;
             linesCleared = 0; 
             level = 1;
             gameOver = false; 
@@ -1201,13 +1242,15 @@
             player.moveTimer = 0;
             player.softDropTimer = 0;
             
-            getRandomPiece(); 
-            updateScoreboard(); 
-            
-            messageBox.style.display = 'none'; 
+            getRandomPiece();
+            console.log('[CyberTris] After getRandomPiece - player.matrix:', player.matrix, 'gameOver:', gameOver, 'BLOCK_SIZE:', BLOCK_SIZE, 'canvas:', canvas.width, 'x', canvas.height);
+            updateScoreboard();
+
+            messageBox.style.display = 'none';
             showScreen('gameContainer');
-            
-            lastTime = performance.now(); 
+            console.log('[CyberTris] After showScreen - gameContainer display:', window.getComputedStyle(gameContainer).display, 'startScreen:', window.getComputedStyle(startScreen).display);
+
+            lastTime = performance.now();
             gameLoopDropCounter = 0;
         }
         
@@ -1306,16 +1349,15 @@
         function handleResponsiveLayout() {
             const controls = document.querySelector('.controls');
             const infoPanel = document.querySelector('.info-panel');
-            const gameContainer = document.getElementById('gameContainer');
+            const gameArea = document.querySelector('.game-area');
             const logoIngame = infoPanel.querySelector('.logo-ingame');
-
-            if (window.innerWidth < 768) {
-                if (controls.parentElement === infoPanel) {
-                     gameContainer.appendChild(controls);
-                }
-            } else {
+            if (window.innerWidth >= 768) {
                 if (controls.parentElement !== infoPanel) {
                     infoPanel.insertBefore(controls, logoIngame);
+                }
+            } else {
+                if (controls.parentElement !== gameArea) {
+                    gameArea.appendChild(controls);
                 }
             }
         }
@@ -1645,6 +1687,10 @@
                               isScreenVisible(rankingScreen);
                 
                 if (inMenu) {
+                    // En el formulario de guardar puntaje, Tab navega entre campos libremente
+                    if (event.key === 'Tab' && isScreenVisible(saveScoreScreen)) {
+                        return;
+                    }
                     // Navegar con flechas o Tab
                     if (event.key === 'ArrowLeft' || (event.key === 'Tab' && event.shiftKey)) {
                         event.preventDefault();
@@ -1676,10 +1722,34 @@
                 else if (event.key === 'ArrowUp' || event.key.toLowerCase() === 'w' || event.key === ' ') { event.preventDefault(); playerRotate(); }
             });
             
-            document.getElementById('leftButton').addEventListener('click', () => {if (!gameOver && !gamePaused && !(player.noControls && player.name === 'Ransomware')) playerMove(-1);});
-            document.getElementById('rightButton').addEventListener('click', () => {if (!gameOver && !gamePaused && !(player.noControls && player.name === 'Ransomware')) playerMove(1);});
-            document.getElementById('downButton').addEventListener('click', () => {if (!gameOver && !gamePaused && !(player.noControls && player.name === 'Ransomware')) {playerDrop(); gameLoopDropCounter = 0;} });
-            document.getElementById('rotateButton').addEventListener('click', () => {if (!gameOver && !gamePaused && !(player.noControls && player.name === 'Ransomware')) playerRotate();});
+            function canControl() {
+                return !gameOver && !gamePaused && !(player.noControls && player.name === 'Ransomware');
+            }
+            function addHoldButton(btn, action, intervalMs) {
+                let timer = null;
+                const start = (e) => {
+                    e.preventDefault();
+                    btn.classList.add('pressed');
+                    if (!canControl()) return;
+                    action();
+                    if (intervalMs) {
+                        timer = setInterval(() => { if (canControl()) action(); }, intervalMs);
+                    }
+                };
+                const stop = () => {
+                    btn.classList.remove('pressed');
+                    if (timer) { clearInterval(timer); timer = null; }
+                };
+                btn.addEventListener('pointerdown', start);
+                btn.addEventListener('pointerup', stop);
+                btn.addEventListener('pointercancel', stop);
+                btn.addEventListener('pointerleave', stop);
+                btn.addEventListener('contextmenu', e => e.preventDefault());
+            }
+            addHoldButton(document.getElementById('leftButton'),  () => playerMove(-1), 80);
+            addHoldButton(document.getElementById('rightButton'), () => playerMove(1),  80);
+            addHoldButton(document.getElementById('downButton'),  () => { playerDrop(); gameLoopDropCounter = 0; }, 50);
+            addHoldButton(document.getElementById('rotateButton'), () => playerRotate(), null);
             
             window.addEventListener('resize', () => { 
                 handleResponsiveLayout();
