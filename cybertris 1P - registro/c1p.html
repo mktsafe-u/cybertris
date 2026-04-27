@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<!--
+    CyberTris v5.0
+    Juego de Tetris con temática de Ciberseguridad
+    
+    Características v5.0:
+    - Soporte completo para Gamepad (Xbox/PlayStation)
+    - Navegación en menús con gamepad
+    - Soft drop configurable
+    - Velocidad de juego ajustada
+    - Sistema de firewall y amenazas cibernéticas
+    - Power-ups de antivirus (Safe-U)
+    - Ranking con localStorage
+    - Responsive design
+    
+    Controles Gamepad:
+    - X (Xbox) / Square (PS): Rotar piezas / Confirmar
+    - D-Pad / Stick: Mover / Navegar menús
+    - Start: Pausar / Iniciar
+    
+    Fecha: Octubre 2025
+-->
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Permissions-Policy" content="gamepad=*">
+    <title>CyberTris v5.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --color-primary: #0054F2;
+            --color-secondary: #293033;
+            --color-tertiary-dark-blue: #090B52;
+            --color-tertiary-bright-blue: #1201FF;
+            --color-tertiary-neon: #03FF9E;
+            --color-danger: #FF0000;
+            --color-gold: #FFD700;
+            --color-gold-shine: #FFFACD;
+            --color-success: #00FF00;
+            --color-piece-s-green: #01A76E; /* Nuevo color para la pieza S */
+            --color-text-on-danger: #FFFFFF;
+            --color-firewall: #00FF7F; /* Color para el nuevo efecto Firewall */
+        }
+        body {
+            font-family: 'VT323', monospace;
+            background-color: var(--color-tertiary-dark-blue);
+            color: var(--color-tertiary-neon);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; /* Alinea arriba para móviles */
+            min-height: 100vh;
+            margin: 0;
+            overflow-y: auto; /* Permite scroll vertical */
+            padding: 20px 10px;
+            box-sizing: border-box;
+        }
+        .screen {
+            display: none; /* Todas las pantallas principales ocultas por defecto */
+            flex-direction: column; align-items: center; justify-content: center; text-align: center;
+            padding: 20px 30px 30px 30px; background-color: var(--color-secondary); border: 3px solid var(--color-primary);
+            border-radius: 15px; box-shadow: 0 0 25px var(--color-primary), inset 0 0 15px var(--color-primary);
+            width: 95%;
+            max-width: 550px; 
+        }
+        #start-screen { display: flex; }
+
+        #start-screen h1, #ranking-screen h1 { font-size: 3.5em; color: var(--color-tertiary-neon); text-shadow: 0 0 8px var(--color-tertiary-neon); margin-bottom: 15px; }
+        #start-screen .logo-container { margin-bottom: 20px; }
+        #start-screen .logo-container img { max-height: 45px; border-radius: 8px; }
+        .intro-heading { font-size: 1.8em; color: var(--color-primary); margin-bottom: 15px; }
+        .intro-section { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px; font-size: 1.2em; max-width: 480px; }
+        .intro-section svg, .intro-section .intro-icon-img { width: 30px; height: 30px; flex-shrink: 0; object-fit: contain; }
+        .intro-section p { margin: 0; text-align: left; line-height: 1.5; }
+        .call-to-action { font-size: 1.3em; margin-top: 10px; margin-bottom: 25px; color: var(--color-tertiary-neon); }
+        .action-button { background-color: var(--color-primary); color: var(--color-tertiary-neon); border: 2px solid var(--color-tertiary-neon); padding: 15px 30px; font-size: 1.6em; cursor: pointer; border-radius: 8px; transition: background-color 0.3s, box-shadow 0.3s; font-family: 'VT323', monospace; box-shadow: 0 0 10px var(--color-tertiary-neon); margin-top: 20px; }
+        .action-button:hover { background-color: var(--color-tertiary-bright-blue); box-shadow: 0 0 15px var(--color-tertiary-neon), 0 0 20px var(--color-tertiary-neon); }
+
+        .game-container { 
+            display: none; 
+            flex-direction: column;
+            align-items: center;
+            gap: 20px; 
+            padding: 10px; 
+            border: 3px solid var(--color-tertiary-neon); 
+            border-radius: 15px; 
+            background-color: rgba(41, 48, 51, 0.7); 
+            box-shadow: 0 0 20px var(--color-tertiary-neon), inset 0 0 10px var(--color-tertiary-neon); 
+            width: auto;
+            max-width: 95vw;
+            box-sizing: border-box;
+        }
+        canvas { 
+            border: 2px solid var(--color-primary); 
+            border-radius: 8px; 
+            background-color: var(--color-secondary); 
+            box-shadow: inset 0 0 10px #000;
+            flex-shrink: 1;
+            min-width: 100px;
+        }
+        .info-panel { 
+            text-align: center; 
+            padding: 10px 20px; 
+            background-color: rgba(9, 11, 82, 0.85); 
+            border-radius: 8px; 
+            border: 1px solid var(--color-tertiary-neon); 
+            min-width: 180px;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            width: 100%;
+        }
+        .info-panel .content-top { margin-bottom: auto; }
+        .info-panel h2 { font-size: 1.8em; margin-bottom: 10px; color: var(--color-tertiary-neon); text-shadow: 0 0 5px var(--color-tertiary-neon); }
+        .info-panel p { font-size: 1.4em; margin: 5px 0; }
+        .info-panel .logo-ingame { margin-top: auto; padding-top: 15px; }
+        .info-panel .logo-ingame img { max-height: 22px; border-radius: 4px; opacity: 0.7; }
+
+        .controls { 
+            display: grid; 
+            grid-template-areas: "left rotate right" ". down ."; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 8px; 
+            margin-top: 15px; 
+            width: 100%; 
+            max-width: 200px;
+        }
+        .controls button { 
+            background-color: var(--color-primary); color: var(--color-tertiary-neon); border: 2px solid var(--color-tertiary-neon); 
+            width: 55px; height: 55px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.8em; cursor: pointer; border-radius: 8px; transition: background-color 0.3s, box-shadow 0.3s; 
+            font-family: 'VT323', monospace; box-shadow: 0 0 5px var(--color-tertiary-neon); 
+        }
+        .controls button:hover { background-color: var(--color-tertiary-bright-blue); box-shadow: 0 0 10px var(--color-tertiary-neon), 0 0 15px var(--color-tertiary-neon); }
+        #leftButton { grid-area: left; } #rotateButton { grid-area: rotate; } #rightButton { grid-area: right; } #downButton { grid-area: down; }
+        .rotate-icon { width: 60%; height: 60%; }
+
+        #message-box, #save-score-screen { 
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            background-color: rgba(9, 11, 82, 0.95); padding: 30px; border-radius: 10px; 
+            text-align: center; z-index: 1000; font-size: 1.6em; line-height:1.4; 
+            border: 2px solid var(--color-danger); box-shadow: 0 0 20px var(--color-danger); 
+            color: var(--color-danger); 
+        }
+        #message-box { display: none; }
+        #message-box.paused, #save-score-screen { border-color: var(--color-primary); box-shadow: 0 0 20px var(--color-primary); color: var(--color-tertiary-neon); }
+        #message-box button, #save-score-screen button { 
+            background-color: var(--color-primary); color: var(--color-tertiary-neon); 
+            border: 1px solid var(--color-tertiary-neon); padding: 10px 20px; 
+            font-size: 0.8em; cursor: pointer; border-radius: 5px; margin-top: 20px; 
+            font-family: 'VT323', monospace;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        #message-box button:hover, #save-score-screen button:hover { background-color: var(--color-tertiary-bright-blue); }
+        
+        #message-box button.gamepad-selected, #save-score-screen button.gamepad-selected,
+        .action-button.gamepad-selected { 
+            background-color: var(--color-tertiary-bright-blue); 
+            box-shadow: 0 0 20px var(--color-tertiary-neon), 0 0 30px var(--color-tertiary-neon), inset 0 0 10px var(--color-tertiary-neon);
+            transform: scale(1.05);
+        }
+        
+        .score-input {
+            background-color: var(--color-tertiary-dark-blue); color: var(--color-tertiary-neon);
+            border: 2px solid var(--color-primary); border-radius: 8px; padding: 10px;
+            font-family: 'VT323', monospace; font-size: 1.1em; text-align: center; width: 80%;
+        }
+        .score-input:focus { outline: none; border-color: var(--color-tertiary-neon); box-shadow: 0 0 8px var(--color-tertiary-neon); }
+        .save-score-form { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; margin-top: 10px; }
+        .save-score-label { font-size: 1.1em; color: var(--color-tertiary-neon); text-align: left; width: 80%; margin-bottom: -4px; }
+        .loading-text { color: var(--color-tertiary-neon); font-size: 1.3em; margin-top: 12px; animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0.3; } }
+        .error-text { color: var(--color-danger); font-size: 1.1em; margin-top: 8px; }
+        #admin-screen { max-width: 720px; }
+        #admin-table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+        #admin-table th { background-color: var(--color-primary); color: var(--color-tertiary-neon); padding: 8px 6px; text-align: left; }
+        #admin-table td { padding: 6px; border-bottom: 1px solid rgba(0,84,242,0.3); text-align: left; word-break: break-all; }
+        #admin-table tr:nth-child(even) td { background-color: rgba(9,11,82,0.6); }
+        #admin-table-container { overflow-x: auto; width: 100%; margin-top: 15px; }
+        .admin-link { font-size: 0.85em; color: rgba(3,255,158,0.35); margin-top: 18px; cursor: pointer; text-decoration: underline; }
+        .admin-link:hover { color: var(--color-tertiary-neon); }
+
+        #ranking-list { list-style: none; padding: 0; margin-top: 20px; width: 100%; max-width: 400px; }
+        #ranking-list li { display: flex; justify-content: space-between; padding: 5px 10px; margin-bottom: 5px; background-color: rgba(9, 11, 82, 0.5); border-radius: 5px; font-size: 1.2em;}
+        #ranking-list li:nth-child(odd) { background-color: rgba(9, 11, 82, 0.8); }
+        #ranking-list .rank-name { text-align: left; }
+        #ranking-list .rank-score { text-align: right; font-weight: bold; }
+
+        .text-success { color: var(--color-tertiary-neon); }
+        .final-bonus-icon { display: inline-block; vertical-align: middle; height: 1.2em; margin-right: 8px; }
+
+        .dynamic-message {
+            position: fixed; display: none; font-size: 1.8em;
+            text-shadow: 1px 1px 0px var(--color-secondary), -1px -1px 0px var(--color-secondary), 1px -1px 0px var(--color-secondary), -1px 1px 0px var(--color-secondary);
+            z-index: 2000; padding: 8px 15px; background-color: rgba(41, 48, 51, 0.6);
+            border-radius: 8px; pointer-events: none;
+        }
+        #attackWarning {
+            color: var(--color-danger); border: 2px solid var(--color-danger);
+            text-shadow: 1px 1px 0px var(--color-secondary), -1px -1px 0px var(--color-secondary), 1px -1px 0px var(--color-secondary), -1px 1px 0px var(--color-secondary), 0 0 8px var(--color-danger);
+        }
+         #secureMessage {
+            color: var(--color-success); border: 2px solid var(--color-success);
+            text-shadow: 1px 1px 0px var(--color-secondary), -1px -1px 0px var(--color-secondary), 1px -1px 0px var(--color-secondary), -1px 1px 0px var(--color-secondary), 0 0 8px var(--color-success);
+        }
+
+        @media (min-width: 768px) {
+            body { justify-content: center; }
+            .game-container { 
+                flex-direction: row; 
+                align-items: stretch; 
+                gap: 30px;
+            }
+            .info-panel {
+                width: auto;
+                justify-content: space-between;
+            }
+        }
+
+        .piece-I { background-color: var(--color-primary); }
+        .piece-L { background-color: var(--color-tertiary-bright-blue); }
+        .piece-J { background-color: var(--color-tertiary-neon); }
+        .piece-T { background-color: var(--color-primary); }
+        .piece-O { background-color: var(--color-tertiary-bright-blue); }
+        .piece-S { background-color: var(--color-piece-s-green); }
+        .piece-Z { background-color: var(--color-tertiary-neon); }
+        .piece-CYBER { background-color: var(--color-danger); }
+        .piece-RANSOM { background-color: var(--color-danger); }
+        .piece-ANTIVIRUS { background-color: var(--color-gold); }
+    </style>
+</head>
+<body>
+    <div id="start-screen" class="screen">
+        <div class="logo-container">
+            <img id="safeULogoStart" src="logo-safe-u.png" alt="Safe-U Logo">
+        </div>
+        <h1>CyberTris</h1>
+        <h2 class="intro-heading">¡Defiende tu Infraestructura Digital!</h2>
+        <div class="intro-section">
+            <svg class="intro-icon" fill="var(--color-primary)" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 0L1 4V11C1 13.45 2.89 15.67 5.39 16.56L10 18L14.61 16.56C17.11 15.67 19 13.45 19 11V4L10 0ZM10 2.17L17 5.11V11C17 12.5 16.06 13.89 14.66 14.44L10 15.82L5.34 14.44C3.94 13.89 3 12.5 3 11V5.11L10 2.17Z"/></svg>
+            <p>Cada pieza es un <strong>sistema a asegurar</strong>. ¡Encájalas correctamente!</p>
+        </div>
+        <div class="intro-section">
+            <svg class="intro-icon" fill="var(--color-danger)" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M0 18H20L10 0L0 18ZM11 15H9V13H11V15ZM11 12H9V7H11V12Z"/></svg>
+            <p>Los huecos son <strong>vulnerabilidades</strong>. ¡Evita que se acumulen y comprometan tu seguridad!</p>
+        </div>
+        <div class="intro-section">
+            <img id="introAntivirusIcon" src="icon-safe-u.png" alt="Antivirus Icon" class="intro-icon-img">
+            <p><strong>Safe-U</strong> estará allí para ayudarte a combatir las amenazas.</p>
+        </div>
+        <p class="call-to-action">¡Organiza tus defensas y no dejes que las amenazas se apilen!</p>
+        <button id="startGameButton" class="action-button">Iniciar Juego</button>
+    </div>
+
+    <div class="game-container" id="gameContainer">
+        <canvas id="cyberTrisCanvas"></canvas>
+        <div class="info-panel">
+            <div class="content-top">
+                <h2>CyberTris</h2>
+                <p>Puntaje: <span id="score">0</span></p>
+                <p>Líneas: <span id="lines">0</span></p>
+                <p>Nivel: <span id="level">1</span></p>
+                <p>Ataques Prevenidos: <span id="powerUpCount">0</span></p>
+            </div>
+            <div class="controls">
+                <button id="leftButton" aria-label="Izquierda">←</button>
+                <button id="rotateButton" aria-label="Rotar">
+                    <svg class="rotate-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"></path><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"></path>
+                    </svg>
+                </button>
+                <button id="rightButton" aria-label="Derecha">→</button>
+                <button id="downButton" aria-label="Abajo">↓</button>
+            </div>
+            <div class="logo-ingame">
+                <img id="safeULogoInGame" src="logo-safe-u.png" alt="Safe-U Logo">
+            </div>
+        </div>
+    </div>
+
+    <div id="message-box">
+        <p id="message-text"></p>
+        <div class="message-buttons">
+            <button id="restartButton">Volver al Inicio</button>
+            <button id="saveScoreButton">Guardar Resultado</button>
+            <button id="resumeButton" style="display:none;">Continuar</button>
+        </div>
+    </div>
+
+    <div id="save-score-screen" class="screen">
+        <h2>Guardar Puntaje</h2>
+        <p id="final-score-display" style="font-size:1.4em; color:var(--color-gold);">Puntaje: 0</p>
+        <div class="save-score-form">
+            <label class="save-score-label">Nombre:</label>
+            <input type="text" id="playerNombreInput" class="score-input" maxlength="30" placeholder="Tu nombre" autocomplete="given-name" />
+            <label class="save-score-label">Apellido:</label>
+            <input type="text" id="playerApellidoInput" class="score-input" maxlength="30" placeholder="Tu apellido" autocomplete="family-name" />
+            <label class="save-score-label">Correo:</label>
+            <input type="email" id="playerEmailInput" class="score-input" maxlength="100" placeholder="tucorreo@empresa.com" autocomplete="email" />
+        </div>
+        <p id="save-error-text" class="error-text" style="display:none;"></p>
+        <button id="submitScoreButton" class="action-button" style="margin-top:15px;">Guardar</button>
+        <p id="save-loading-text" class="loading-text" style="display:none;">Guardando...</p>
+    </div>
+
+    <div id="ranking-screen" class="screen">
+        <h1>Ranking</h1>
+        <ol id="ranking-list"></ol>
+        <p id="ranking-loading" class="loading-text" style="display:none;">Cargando...</p>
+        <button id="playAgainButton" class="action-button">Jugar de Nuevo</button>
+        <p class="admin-link" id="adminAccessLink">admin</p>
+    </div>
+
+    <div id="admin-screen" class="screen">
+        <h1>Panel Admin</h1>
+        <div id="admin-login">
+            <p style="font-size:1.2em;">Contraseña:</p>
+            <input type="password" id="adminPasswordInput" class="score-input" placeholder="Contraseña" style="margin-top:8px;" />
+            <p id="admin-login-error" class="error-text" style="display:none;">Contraseña incorrecta</p>
+            <button id="adminLoginButton" class="action-button" style="margin-top:15px;">Ingresar</button>
+            <button id="adminBackButton" class="action-button" style="margin-top:10px; background:transparent; border-color:rgba(3,255,158,0.4); color:rgba(3,255,158,0.6); font-size:1.2em;">Volver</button>
+        </div>
+        <div id="admin-data" style="display:none; width:100%;">
+            <p id="admin-loading" class="loading-text">Cargando datos...</p>
+            <div id="admin-table-container" style="display:none;">
+                <table id="admin-table">
+                    <thead>
+                        <tr><th>#</th><th>Nombre</th><th>Apellido</th><th>Email</th><th>Puntaje</th><th>Fecha</th></tr>
+                    </thead>
+                    <tbody id="admin-table-body"></tbody>
+                </table>
+            </div>
+            <button id="exportCsvButton" class="action-button" style="margin-top:15px; display:none;">Exportar CSV</button>
+            <button id="adminLogoutButton" class="action-button" style="margin-top:10px; background:transparent; border-color:rgba(3,255,158,0.4); color:rgba(3,255,158,0.6); font-size:1.2em;">Volver al Inicio</button>
+        </div>
+    </div>
+
+    <div id="attackWarning" class="dynamic-message"></div>
+    <div id="secureMessage" class="dynamic-message"></div>
+    
+    <img id="antivirusImageElement" src="icon-safe-u.png" alt="Antivirus Power-Up" style="display:none;">
+    <img id="PhishingThreatImage" src="phishing_icon.png" alt="Phishing Icon" style="display:none;">
+    <img id="MalwareInfectionImage" src="malware_icon.png" alt="Malware Icon" style="display:none;">
+    <img id="BruteForceAttackImage" src="bruteforce_icon.png" alt="Brute Force Icon" style="display:none;">
+    <img id="ZeroDayExploitImage" src="zeroday_icon.png" alt="ZeroDay Icon" style="display:none;">
+    <img id="DataLeakThreatImage" src="dataleak_icon.png" alt="DataLeak Icon" style="display:none;">
+
+    <script>
+        // --- Elementos del DOM ---
+        const startScreen = document.getElementById('start-screen');
+        const gameContainer = document.getElementById('gameContainer');
+        const saveScoreScreen = document.getElementById('save-score-screen');
+        const rankingScreen = document.getElementById('ranking-screen');
+        const allScreens = [startScreen, gameContainer, saveScoreScreen, rankingScreen, adminScreen];
+
+        const startGameButton = document.getElementById('startGameButton');
+        const canvas = document.getElementById('cyberTrisCanvas');
+        const context = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const linesElement = document.getElementById('lines');
+        const levelElement = document.getElementById('level');
+        const powerUpCountElement = document.getElementById('powerUpCount');
+        const messageBox = document.getElementById('message-box');
+        const messageText = document.getElementById('message-text');
+        const restartButton = document.getElementById('restartButton');
+        const saveScoreButton = document.getElementById('saveScoreButton');
+        const resumeButton = document.getElementById('resumeButton');
+        const attackWarningElement = document.getElementById('attackWarning');
+        const secureMessageElement = document.getElementById('secureMessage');
+        const antivirusImageHTML = document.getElementById('antivirusImageElement');
+        const safeULogoStart = document.getElementById('safeULogoStart');
+        const safeULogoInGame = document.getElementById('safeULogoInGame');
+        const introAntivirusIcon = document.getElementById('introAntivirusIcon');
+        
+        const submitScoreButton = document.getElementById('submitScoreButton');
+        const playerNombreInput = document.getElementById('playerNombreInput');
+        const playerApellidoInput = document.getElementById('playerApellidoInput');
+        const playerEmailInput = document.getElementById('playerEmailInput');
+        const finalScoreDisplay = document.getElementById('final-score-display');
+        const saveErrorText = document.getElementById('save-error-text');
+        const saveLoadingText = document.getElementById('save-loading-text');
+        const rankingList = document.getElementById('ranking-list');
+        const rankingLoading = document.getElementById('ranking-loading');
+        const playAgainButton = document.getElementById('playAgainButton');
+        const adminAccessLink = document.getElementById('adminAccessLink');
+        const adminScreen = document.getElementById('admin-screen');
+        const adminLogin = document.getElementById('admin-login');
+        const adminData = document.getElementById('admin-data');
+        const adminPasswordInput = document.getElementById('adminPasswordInput');
+        const adminLoginError = document.getElementById('admin-login-error');
+        const adminLoginButton = document.getElementById('adminLoginButton');
+        const adminBackButton = document.getElementById('adminBackButton');
+        const adminLoading = document.getElementById('admin-loading');
+        const adminTableContainer = document.getElementById('admin-table-container');
+        const adminTableBody = document.getElementById('admin-table-body');
+        const exportCsvButton = document.getElementById('exportCsvButton');
+        const adminLogoutButton = document.getElementById('adminLogoutButton');
+
+        const attackImageElements = {
+            PhishingThreatImage: document.getElementById('PhishingThreatImage'),
+            MalwareInfectionImage: document.getElementById('MalwareInfectionImage'),
+            BruteForceAttackImage: document.getElementById('BruteForceAttackImage'),
+            ZeroDayExploitImage: document.getElementById('ZeroDayExploitImage'),
+            DataLeakThreatImage: document.getElementById('DataLeakThreatImage')
+        };
+
+        const ANTIVIRUS_IMAGE_URL = "icon-safe-u.png";
+        const SAFE_U_LOGO_URL = "logo-safe-u.png";
+
+        antivirusImageHTML.src = ANTIVIRUS_IMAGE_URL;
+        safeULogoStart.src = SAFE_U_LOGO_URL;
+        safeULogoInGame.src = SAFE_U_LOGO_URL;
+        if(introAntivirusIcon) introAntivirusIcon.src = ANTIVIRUS_IMAGE_URL;
+
+        // --- Configuración del Juego ---
+        const COLS = 10; const ROWS = 20; let BLOCK_SIZE = 30;
+        let board, score, linesCleared, level, dropInterval, initialDropInterval, lastTime = 0;
+        let gamePaused = false, gameOver = true, preventedAttacksCount = 0;
+        let pieceCounter = 0, nextAttackThreshold, nextRansomwareThreshold;
+        let spawnAntivirusNext = false;
+        let nextInstanceId = 1;
+        let activeThreatContext = null; 
+        let ransomSolutionToggle = false; 
+        let attackShuffleBag = []; 
+        let finalScoreForRanking = 0;
+        let firewall;
+        let animation;
+        let gameLoopDropCounter = 0;
+        let selectedMenuButtonIndex = 0;
+        let currentMenuButtons = [];
+        const FIREWALL_LETTERS = ['🛡️','F','I','R','E','W','A','L','L','🛡️'];
+
+        const RANSOMWARE_LETTERS = ['R', 'A', 'N', 'S', 'O', 'M', 'W', 'A', 'R', 'E'];
+
+        // ── Firebase config ─────────────────────────────────────────────────
+        // Reemplazá estos valores con los de tu proyecto en Firebase Console
+        const FIREBASE_CONFIG = {
+            apiKey:            "AIzaSyCMXg2XyhdVMipkbioKCnkR2uH0HhS2Xeo",
+            authDomain:        "cybertris-safe-u.firebaseapp.com",
+            projectId:         "cybertris-safe-u",
+            storageBucket:     "cybertris-safe-u.firebasestorage.app",
+            messagingSenderId: "362260009473",
+            appId:             "1:362260009473:web:05fff8a2e6b6aa86fae600",
+            measurementId:     "G-114N25VR9N"
+        };
+        const ADMIN_PASSWORD = "cybertris2024"; // Cambiá esta contraseña
+        const SCORES_COLLECTION = "cybertris_scores";
+
+        let db = null;
+        function initFirebase() {
+            try {
+                if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+                db = firebase.firestore();
+                if (typeof firebase.analytics === 'function') firebase.analytics();
+            } catch(e) { console.error("Firebase init error:", e); }
+        }
+        // ────────────────────────────────────────────────────────────────────
+        
+        const NEW_ATTACK_SHAPE = [[1, 1, 1], [1, 1, 1]]; 
+        const NEW_CYBERATTACK_TYPES = [ 
+            { name: 'PhishingThreat', shape: NEW_ATTACK_SHAPE, color: 'piece-CYBER', isThreat: true, noRotation: true, isFullImage: true, imageElementName: 'PhishingThreatImage', alertMessage: "¡Alerta de Phishing!", solutionMessage: "¡Phishing Reportado Correctamente!", imageUrl: "phishing_icon.png" },
+            { name: 'MalwareInfection', shape: NEW_ATTACK_SHAPE, color: 'piece-CYBER', isThreat: true, noRotation: true, isFullImage: true, imageElementName: 'MalwareInfectionImage', alertMessage: "¡Amenaza de Malware Detectada!", solutionMessage: "¡Antivirus Actualizado y Activo!", imageUrl: "malware_icon.png" },
+            { name: 'BruteForceAttack', shape: NEW_ATTACK_SHAPE, color: 'piece-CYBER', isThreat: true, noRotation: true, isFullImage: true, imageElementName: 'BruteForceAttackImage', alertMessage: "¡Alerta! Contraseña frágil vulnerada", solutionMessage: "¡Contraseña Actualizada! Ahora es fuerte y segura.", imageUrl: "bruteforce_icon.png" },
+            { name: 'ZeroDayExploit', shape: NEW_ATTACK_SHAPE, color: 'piece-CYBER', isThreat: true, noRotation: true, isFullImage: true, imageElementName: 'ZeroDayExploitImage', alertMessage: "¡Vulnerabilidad Crítica! Explotación de día cero detectada.", solutionMessage: "¡Parche de Emergencia Aplicado!", imageUrl: "zeroday_icon.png" },
+            { name: 'DataLeakThreat', shape: NEW_ATTACK_SHAPE, color: 'piece-CYBER', isThreat: true, noRotation: true, isFullImage: true, imageElementName: 'DataLeakThreatImage', alertMessage: "¡ALERTA! Posible fuga de datos.", solutionMessage: "¡Protocolos DLP Reforzados!", imageUrl: "dataleak_icon.png" }
+        ];
+
+        const RANSOMWARE_PIECE_SHAPE = { 
+            shape: [RANSOMWARE_LETTERS.map((_, i) => i + 6)], 
+            color: 'piece-RANSOM', 
+            name: 'Ransomware', 
+            isThreat: true, 
+            noControls: true, 
+            solutionMessages: ["Respuesta a incidentes iniciada", "Safe-U al rescate"]
+        };
+        const ANTIVIRUS_PIECE_SHAPE = { shape: [[1]], color: 'piece-ANTIVIRUS', name: 'Antivirus', isPowerUp: true };
+        const PIECES = [
+            { shape: [[1,1,1,1]], color: 'piece-I', name: 'Firewall' },
+            { shape: [[1,0,0],[1,1,1]], color: 'piece-L', name: 'Endpoint Sec.' },
+            { shape: [[0,0,1],[1,1,1]], color: 'piece-J', name: 'Secure VPN' },
+            { shape: [[0,1,0],[1,1,1]], color: 'piece-T', name: 'IDS/IPS' },
+            { shape: [[1,1],[1,1]], color: 'piece-O', name: 'Auth Factor', noRotation: true },
+            { shape: [[0,1,1],[1,1,0]], color: 'piece-S', name: 'Data Backup' },
+            { shape: [[1,1,0],[0,1,1]], color: 'piece-Z', name: 'Encrypted Data' },
+        ];
+        let player = { 
+            pos: { x: 0, y: 0 }, matrix: null, color: '', name: '', isThreat: false, noControls: false, noRotation: false, 
+            isPowerUp: false, isFullImage: false, imageElementName: null, solutionMessage: null,
+            moveDirection: 0,
+            moveTimer: 0,
+            dasDelay: 200, 
+            arrDelay: 60,
+            softDropTimer: 0,
+            softDropDelay: 50
+        };
+
+        function isScreenVisible(element) {
+            const display = window.getComputedStyle(element).display;
+            return display !== 'none';
+        }
+
+        const powerUpDefaultSecureMessage = "¡Reforzá tus barreras de defensa!";
+
+        function getCssVariableValue(varName) { return getComputedStyle(document.documentElement).getPropertyValue(varName.startsWith('--') ? varName : `--${varName}`).trim(); }
+        
+        function calculateBlockSize() {
+            const maxCanvasHeight = window.innerHeight * 0.85;
+            const availableWidth = window.innerWidth - 40;
+            let canvasPortion = 0.65;
+            if (window.innerWidth < 768) {
+                canvasPortion = 1;
+            }
+            const maxCanvasWidth = availableWidth * canvasPortion;
+            BLOCK_SIZE = Math.floor(Math.min(maxCanvasHeight / ROWS, maxCanvasWidth / COLS, 35));
+            canvas.width = COLS * BLOCK_SIZE;
+            canvas.height = ROWS * BLOCK_SIZE;
+        }
+
+        function createBoard() { return Array.from({ length: ROWS }, () => Array(COLS).fill(0)); }
+        function setNewThreatThresholds() {
+            nextAttackThreshold = pieceCounter + Math.floor(Math.random() * (8 - 5 + 1)) + 5; 
+            nextRansomwareThreshold = pieceCounter + Math.floor(Math.random() * (12 - 8 + 1)) + 8;
+        }
+
+        function getRandomPiece() {
+            let selectedPieceData;
+            if (spawnAntivirusNext) {
+                selectedPieceData = JSON.parse(JSON.stringify(ANTIVIRUS_PIECE_SHAPE));
+                spawnAntivirusNext = false; 
+                
+                let msgToShow = powerUpDefaultSecureMessage;
+                if (activeThreatContext) { 
+                    let threatOnBoard = false;
+                    for (let r = 0; r < ROWS; r++) {
+                        for (let c = 0; c < COLS; c++) {
+                            const cell = board[r][c];
+                            if (typeof cell === 'object' && cell !== null && cell.isThreat && cell.name === activeThreatContext.name) {
+                                threatOnBoard = true;
+                                break;
+                            }
+                        }
+                        if (threatOnBoard) break;
+                    }
+                    if (threatOnBoard) {
+                        if (activeThreatContext.name === 'Ransomware' && RANSOMWARE_PIECE_SHAPE.solutionMessages) {
+                            msgToShow = RANSOMWARE_PIECE_SHAPE.solutionMessages[ransomSolutionToggle ? 1 : 0];
+                            ransomSolutionToggle = !ransomSolutionToggle;
+                        } else if (activeThreatContext.solutionMessage) {
+                            msgToShow = activeThreatContext.solutionMessage;
+                        }
+                    }
+                }
+                displayDynamicMessage(secureMessageElement, msgToShow);
+            } else {
+                pieceCounter++;
+                if (pieceCounter >= nextRansomwareThreshold && Math.random() < 0.4) {
+                    selectedPieceData = JSON.parse(JSON.stringify(RANSOMWARE_PIECE_SHAPE));
+                    activeThreatContext = { name: selectedPieceData.name, solutionMessage: selectedPieceData.solutionMessages[0] };
+                    displayDynamicMessage(attackWarningElement, "¡ALERTA DE RANSOMWARE!");
+                    pieceCounter = 0; setNewThreatThresholds();
+                } else if (pieceCounter >= nextAttackThreshold && Math.random() < 0.5) {
+                    if (attackShuffleBag.length === 0) { 
+                        attackShuffleBag = [...NEW_CYBERATTACK_TYPES];
+                        for (let i = attackShuffleBag.length - 1; i > 0; i--) {
+                            const j = Math.floor(Math.random() * (i + 1));
+                            [attackShuffleBag[i], attackShuffleBag[j]] = [attackShuffleBag[j], attackShuffleBag[i]];
+                        }
+                    }
+                    const nextAttackDef = attackShuffleBag.pop(); 
+                    selectedPieceData = JSON.parse(JSON.stringify(nextAttackDef));
+                    activeThreatContext = { name: selectedPieceData.name, solutionMessage: selectedPieceData.solutionMessage };
+                    displayDynamicMessage(attackWarningElement, selectedPieceData.alertMessage);
+                    nextAttackThreshold = pieceCounter + Math.floor(Math.random() * (5 - 3 + 1)) + 3;
+                } else {
+                    selectedPieceData = JSON.parse(JSON.stringify(PIECES[Math.floor(Math.random() * PIECES.length)]));
+                }
+            }
+            player.matrix = selectedPieceData.shape; 
+            player.color = selectedPieceData.color; 
+            player.name = selectedPieceData.name;
+            player.isThreat = selectedPieceData.isThreat || false;
+            player.noControls = selectedPieceData.noControls || false;
+            player.noRotation = selectedPieceData.noRotation || false; 
+            player.isPowerUp = selectedPieceData.isPowerUp || false;
+            player.isFullImage = selectedPieceData.isFullImage || false;
+            player.imageElementName = selectedPieceData.imageElementName || null;
+            player.solutionMessage = selectedPieceData.solutionMessage || null; 
+            
+            player.pos.y = 0;
+            if (player.name === 'Ransomware') player.pos.x = 0;
+            else player.pos.x = Math.floor(COLS / 2) - Math.floor(player.matrix[0].length / 2);
+            
+            if (checkCollision(board, player) === 'board') {
+                gameOver = true; 
+            }
+        }
+
+        function displayDynamicMessage(element, message) {
+            element.textContent = message;
+            const gameAreaRect = canvas.getBoundingClientRect();
+            element.style.maxWidth = "80%"; 
+            element.style.display = 'block'; 
+            const warnWidth = element.offsetWidth;
+            const warnHeight = element.offsetHeight;
+            let topPos = gameAreaRect.top + (gameAreaRect.height * 0.1);
+            if(element.id === 'secureMessage') {
+                topPos = gameAreaRect.top + (gameAreaRect.height * 0.5) - (warnHeight / 2);
+            }
+            let leftPos = gameAreaRect.left + (gameAreaRect.width / 2) - (warnWidth / 2);
+            topPos = Math.max(20, Math.min(topPos, window.innerHeight - warnHeight - 20));
+            leftPos = Math.max(20, Math.min(leftPos, window.innerWidth - warnWidth - 20));
+            element.style.top = `${topPos}px`; 
+            element.style.left = `${leftPos}px`;
+
+            const duration = (message.includes("CERTIFICACIÓN")) ? 4500 : 3500;
+            setTimeout(() => { element.style.display = 'none'; }, duration);
+        }
+        
+        function draw() {
+            // SIEMPRE limpiar y dibujar, sin excepciones
+            context.fillStyle = getCssVariableValue('--color-secondary');
+            context.fillRect(0, 0, canvas.width, canvas.height);
+
+            if (!board || !player.matrix) return;
+
+            const drawnThreatInstances = new Set(); 
+
+            if (animation && animation.type === 'boardClear' && Math.floor((performance.now() - animation.startTime) / 100) % 2 === 0) {
+                // No draw board during boardClear flicker
+            } else {
+                board.forEach((row, y) => {
+                    row.forEach((cellData, x) => {
+                        if (cellData === 0) return;
+
+                        const imageElement = (cellData.isFullImage) ? attackImageElements[cellData.imageElementName] : null;
+                        const imageIsReady = imageElement && imageElement.complete && imageElement.naturalHeight !== 0;
+
+                        if (cellData.isFullImage && imageIsReady) {
+                            if (!drawnThreatInstances.has(cellData.instanceId)) {
+                                let minX = COLS, minY = ROWS;
+                                board.forEach((r, ry) => r.forEach((c, cx) => {
+                                    if(typeof c === 'object' && c.instanceId === cellData.instanceId) {
+                                        minX = Math.min(minX, cx);
+                                        minY = Math.min(minY, ry);
+                                    }
+                                }));
+                                context.drawImage(imageElement, minX * BLOCK_SIZE, minY * BLOCK_SIZE, 3 * BLOCK_SIZE, 2 * BLOCK_SIZE);
+                                drawnThreatInstances.add(cellData.instanceId);
+                            }
+                        } else { 
+                            drawSingleBlock(cellData, x, y);
+                        }
+                    });
+                });
+            }
+
+            // Dibujar firewall - titila durante animación de firewall
+            const shouldDrawFirewall = animation && animation.type === 'firewall' 
+                ? Math.floor((performance.now() - animation.startTime) / 100) % 2 === 0 
+                : firewall.charges > 0;
+                
+            if (shouldDrawFirewall) {
+                const opacity = 0.2 + (Math.max(firewall.charges, 1) * 0.15);
+                context.fillStyle = `rgba(0, 255, 127, ${opacity})`;
+                for (let x = 0; x < COLS; x++) {
+                    context.fillRect(x * BLOCK_SIZE, firewall.row * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+                }
+                for (let x = 0; x < COLS; x++) {
+                    drawTextInBlock(FIREWALL_LETTERS[x], x * BLOCK_SIZE, firewall.row * BLOCK_SIZE, getCssVariableValue('--color-primary'));
+                }
+            }
+
+            // Dibujar pieza activa - titila durante animación de firewall
+            const shouldDrawPlayer = animation && animation.type === 'firewall'
+                ? Math.floor((performance.now() - animation.startTime) / 100) % 2 === 0
+                : !animation || Math.floor((performance.now() - animation.startTime) / 100) % 2 === 0;
+                
+            if (shouldDrawPlayer && player.matrix) {
+                const imageElement = (player.isFullImage) ? attackImageElements[player.imageElementName] : null;
+                const imageIsReady = imageElement && imageElement.complete && imageElement.naturalHeight !== 0;
+
+                if (player.isFullImage && imageIsReady) {
+                    context.drawImage(imageElement, player.pos.x * BLOCK_SIZE, player.pos.y * BLOCK_SIZE, 3 * BLOCK_SIZE, 2 * BLOCK_SIZE);
+                } else if (player.isFullImage && !imageIsReady) {
+                    context.fillStyle = getCssVariableValue('--color-danger');
+                    context.fillRect(player.pos.x * BLOCK_SIZE, player.pos.y * BLOCK_SIZE, 3 * BLOCK_SIZE, 2 * BLOCK_SIZE);
+                } else {
+                    player.matrix.forEach((row, y_matrix) => {
+                        row.forEach((cellValueInShape, x_matrix) => {
+                            if (cellValueInShape !== 0) {
+                                const tempCellData = {
+                                    class: player.color, name: player.name, isPowerUp: player.isPowerUp,
+                                    letter: (player.name === 'Ransomware' && cellValueInShape >= 6) ? RANSOMWARE_LETTERS[cellValueInShape - 6] : null
+                                };
+                                drawSingleBlock(tempCellData, x_matrix + player.pos.x, y_matrix + player.pos.y, true);
+                            }
+                        });
+                    });
+                }
+            }
+        }
+        
+        function drawSingleBlock(cellData, x, y, isActivePlayer = false) {
+            const blockX = x * BLOCK_SIZE;
+            const blockY = y * BLOCK_SIZE;
+            if (blockY < 0) return;
+
+            let baseColorStyle, letter = null, isAntivirusBlock = false, className = '';
+            if (typeof cellData === 'object' && cellData !== null) {
+                className = cellData.class; letter = cellData.letter; isAntivirusBlock = cellData.name === 'Antivirus';
+            } else if (typeof cellData === 'string') { className = cellData; } 
+            else { return; }
+            baseColorStyle = getComputedStyleForClass(className);
+
+            if (isAntivirusBlock && antivirusImageHTML.complete && antivirusImageHTML.naturalHeight !== 0) {
+                context.drawImage(antivirusImageHTML, blockX, blockY, BLOCK_SIZE, BLOCK_SIZE);
+            } else {
+                context.fillStyle = baseColorStyle;
+                context.fillRect(blockX, blockY, BLOCK_SIZE, BLOCK_SIZE);
+            }
+            context.strokeStyle = isActivePlayer ? 'black' : 'rgba(0,0,0,0.5)';
+            context.lineWidth = isActivePlayer ? 1.5 : 1;
+            context.strokeRect(blockX, blockY, BLOCK_SIZE, BLOCK_SIZE);
+            if (letter) { drawTextInBlock(letter, blockX, blockY, getCssVariableValue('--color-text-on-danger')); }
+        }
+
+        function getComputedStyleForClass(className) { 
+            const tempDiv = document.createElement('div'); tempDiv.style.display = 'none'; tempDiv.className = className;
+            document.body.appendChild(tempDiv); const style = getComputedStyle(tempDiv).backgroundColor; document.body.removeChild(tempDiv); return style;
+        }
+        function drawTextInBlock(text, blockX, blockY, color = getCssVariableValue('color-danger')) { 
+            context.fillStyle = color; context.font = `${BLOCK_SIZE * 0.7}px VT323`; 
+            context.textAlign = 'center'; context.textBaseline = 'middle';
+            context.fillText(text, blockX + BLOCK_SIZE / 2, blockY + BLOCK_SIZE / 2 + BLOCK_SIZE * 0.05); 
+        }
+
+        function merge(board, player) {
+            const pieceInstanceId = nextInstanceId++;
+            let antivirusHitSomething = false;
+
+            if (player.isPowerUp) {
+                player.matrix.forEach((row, y_matrix) => {
+                    if (antivirusHitSomething) return;
+                    row.forEach((valueInPieceShape, x_matrix) => { 
+                        if (valueInPieceShape !== 0) {
+                            if(antivirusHitSomething) return;
+                            const boardY = y_matrix + player.pos.y; 
+                            const boardX = x_matrix + player.pos.x;
+                            const cellsToScan = [ { y: boardY, x: boardX }, { y: boardY - 1, x: boardX }, { y: boardY + 1, x: boardX }, { y: boardY, x: boardX - 1 }, { y: boardY, x: boardX + 1 } ];
+                            for (const cell of cellsToScan) {
+                                if (cell.y >= 0 && cell.y < ROWS && cell.x >= 0 && cell.x < COLS) {
+                                    const boardCell = board[cell.y][cell.x];
+                                    if (typeof boardCell === 'object' && boardCell !== null && boardCell.isThreat) {
+                                        removeThreatInstance(boardCell.instanceId); 
+                                        antivirusHitSomething = true;
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+            }
+            if(antivirusHitSomething) return;
+
+            player.matrix.forEach((row, y_matrix) => {
+                row.forEach((valueInPieceShape, x_matrix) => { 
+                    if (valueInPieceShape !== 0) {
+                        const boardY = y_matrix + player.pos.y; 
+                        const boardX = x_matrix + player.pos.x;
+                        if (boardY < 0) return; 
+                        
+                        let cellDataToStore;
+                        if (player.isThreat) {
+                            cellDataToStore = { 
+                                class: player.color, isThreat: true, instanceId: pieceInstanceId, name: player.name,
+                                isFullImage: player.isFullImage, imageElementName: player.imageElementName, solutionMessage: player.solutionMessage 
+                            };
+                            if (player.name === 'Ransomware' && valueInPieceShape >= 6) { 
+                                cellDataToStore.letter = RANSOMWARE_LETTERS[valueInPieceShape - 6];
+                            }
+                        } else if (player.isPowerUp) {
+                            cellDataToStore = { class: player.color, isSolid: true, isPowerUpBlock: true, name: player.name };
+                        } else { 
+                            cellDataToStore = { class: player.color, isSolid: true, name: player.name };
+                        }
+                        
+                        if (cellDataToStore && boardY >= 0 && boardY < ROWS && boardX >= 0 && boardX < COLS) {
+                            board[boardY][boardX] = cellDataToStore;
+                        }
+                    }
+                });
+            });
+
+             if (player.isThreat) {
+                checkBoardPowerUpCollisions(player, pieceInstanceId);
+            }
+        }
+
+        function checkBoardPowerUpCollisions(mergedPiece, threatInstanceId){
+            let collisionOccurred = false;
+            const powerUpsToRemove = new Set();
+
+            mergedPiece.matrix.forEach((row, y_offset) => {
+                row.forEach((cell, x_offset) => {
+                    if (cell !== 0) {
+                        const boardY = mergedPiece.pos.y + y_offset;
+                        const boardX = mergedPiece.pos.x + x_offset;
+                        const neighbors = [{ y: boardY - 1, x: boardX }, { y: boardY + 1, x: boardX }, { y: boardY, x: boardX - 1 }, { y: boardY, x: boardX + 1 }];
+                        for (const n of neighbors) {
+                            if (n.y >= 0 && n.y < ROWS && n.x >= 0 && n.x < COLS) {
+                                const neighborCell = board[n.y][n.x];
+                                if (neighborCell && neighborCell.isPowerUpBlock) {
+                                    collisionOccurred = true;
+                                    powerUpsToRemove.add(JSON.stringify(n));
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+
+            if (collisionOccurred) {
+                removeThreatInstance(threatInstanceId, false);
+                powerUpsToRemove.forEach(posStr => {
+                    const pos = JSON.parse(posStr);
+                    board[pos.y][pos.x] = 0;
+                });
+                applyGravityToNonThreats();
+            }
+        }
+
+        function removeThreatInstance(instanceIdToRemove) {
+            let threatRemoved = false;
+            for (let r = 0; r < ROWS; r++) {
+                for (let c = 0; c < COLS; c++) {
+                    const cell = board[r][c];
+                    if (typeof cell === 'object' && cell !== null && cell.instanceId === instanceIdToRemove) {
+                        board[r][c] = 0; 
+                        threatRemoved = true;
+                    }
+                }
+            }
+            if (threatRemoved) {
+                preventedAttacksCount++;
+                score += 500 * level; 
+                updateScoreboard();
+                let fell;
+                do { fell = applyGravityToNonThreats(); } while (fell);
+            }
+        }
+        
+        function applyGravityToNonThreats() {
+            let blocksFell = false;
+            for (let y = ROWS - 2; y >= 0; y--) { 
+                for (let x = 0; x < COLS; x++) {
+                    if (board[y][x] !== 0 && board[y+1][x] === 0) {
+                        const island = [];
+                        const visited = new Set();
+                        const queue = [{x, y}];
+                        visited.add(`${x},${y}`);
+                        
+                        while (queue.length > 0) {
+                            const {x: curX, y: curY} = queue.shift();
+                            island.push({x: curX, y: curY, data: board[curY][curX]});
+                            
+                            const neighbors = [{x:curX+1, y:curY}, {x:curX-1, y:curY}, {x:curX, y:curY+1}, {x:curX, y:curY-1}];
+                            for (const n of neighbors) {
+                                if (n.x >= 0 && n.x < COLS && n.y >= 0 && n.y < ROWS && !visited.has(`${n.x},${n.y}`) && board[n.y][n.x] !== 0) {
+                                     visited.add(`${n.x},${n.y}`);
+                                     queue.push(n);
+                                }
+                            }
+                        }
+                        
+                        let fallDistance = ROWS;
+                        for(const block of island) {
+                            let dist = 0;
+                            for(let i = block.y + 1; i < ROWS; i++){
+                                 if(board[i][block.x] === 0 || island.some(b => b.x === block.x && b.y === i)) {
+                                     dist++;
+                                 } else {
+                                     break;
+                                 }
+                            }
+                            fallDistance = Math.min(fallDistance, dist);
+                        }
+
+                        if (fallDistance > 0) {
+                            island.sort((a,b) => b.y - a.y); 
+                            island.forEach(block => board[block.y][block.x] = 0);
+                            island.forEach(block => board[block.y + fallDistance][block.x] = block.data);
+                            blocksFell = true;
+                        }
+                    }
+                }
+            }
+            return blocksFell;
+        }
+
+        function checkCollision(board, piece) {
+            if (!piece.matrix) return 'none';
+            const matrix = piece.matrix;
+            const pos = piece.pos;
+            for (let y = 0; y < matrix.length; y++) {
+                for (let x = 0; x < matrix[y].length; x++) {
+                    if (matrix[y][x] !== 0) {
+                        const boardY = y + pos.y;
+                        const boardX = x + pos.x;
+
+                        if (boardY >= ROWS || boardX < 0 || boardX >= COLS || (boardY >= 0 && board[boardY][boardX] !== 0)) {
+                            return 'board';
+                        }
+                        if (piece.isThreat && firewall.charges > 0 && boardY === firewall.row) {
+                            return 'firewall';
+                        }
+                    }
+                }
+            }
+            return 'none';
+        }
+        
+        function playerDrop() { 
+            if (gameOver || gamePaused || animation) return;
+            player.pos.y++;
+            
+            const collisionType = checkCollision(board, player);
+
+            if (collisionType !== 'none') {
+                player.pos.y--; 
+
+                if (collisionType === 'firewall') {
+                    triggerFirewallDestruction(() => {
+                        getRandomPiece();
+                    });
+                } else if (collisionType === 'board') {
+                    merge(board, player);
+                    clearLines(); 
+                    if (!animation) {
+                        getRandomPiece();
+                    }
+                    if(gameOver) { return; }
+                }
+            }
+        }
+        
+        function playerMove(direction) { 
+            if (gameOver || gamePaused || (player.noControls && player.name === 'Ransomware') || animation) return;
+            player.pos.x += direction;
+            if (checkCollision(board, player) !== 'none') {
+                player.pos.x -= direction;
+            }
+        }
+        function playerRotate() { 
+            if (gameOver || gamePaused || player.noRotation || player.isPowerUp || 
+                (player.noControls && player.name === 'Ransomware') || 
+                (player.name && NEW_CYBERATTACK_TYPES.some(atk => atk.name === player.name && atk.noRotation)) || 
+                player.name === 'Auth Factor' || animation) return; 
+            const originalPos = player.pos.x; let offset = 1; const rotated = rotateMatrix(player.matrix);
+            const originalMatrix = player.matrix; player.matrix = rotated;
+            while (checkCollision(board, player) !== 'none') {
+                player.pos.x += offset; offset = -(offset + (offset > 0 ? 1 : -1));
+                if (Math.abs(offset) > player.matrix[0].length + 2) { 
+                    player.matrix = originalMatrix; 
+                    player.pos.x = originalPos; 
+                    return; 
+                }
+            }
+        }
+        function rotateMatrix(matrix) { 
+            const N = matrix.length; const M = matrix[0].length; const newMatrix = Array.from({ length: M }, () => Array(N).fill(0));
+            for (let r = 0; r < N; r++) { for (let c = 0; c < M; c++) newMatrix[c][N - 1 - r] = matrix[r][c]; } return newMatrix;
+        }
+        
+        function clearLines() {
+            const clearedRows = [];
+            outer: for (let y = board.length - 1; y >= 0; y--) {
+                for (let x = 0; x < board[y].length; x++) {
+                    const cell = board[y][x];
+                    if (cell === 0 || (typeof cell === 'object' && cell !== null && cell.isThreat)) {
+                        continue outer;
+                    }
+                }
+                clearedRows.push(y);
+            }
+
+            const linesClearedThisTurn = clearedRows.length;
+
+            if (linesClearedThisTurn > 0) {
+                linesCleared += linesClearedThisTurn;
+                if (linesClearedThisTurn === 1) score += 40 * level;
+                else if (linesClearedThisTurn === 2) score += 100 * level;
+                else if (linesClearedThisTurn === 3) score += 300 * level;
+                else if (linesClearedThisTurn >= 4) score += 1200 * level;
+                
+                spawnAntivirusNext = true;
+
+                if (linesClearedThisTurn >= 3) {
+                    displayDynamicMessage(secureMessageElement, '✅CERTIFICACIÓN APROBADA✅');
+                    triggerBoardClearAnimation(() => {
+                        firewall.charges = Math.min(3, firewall.charges + 1);
+                        getRandomPiece();
+                    });
+                } else {
+                    const newBoard = board.filter((_, y) => !clearedRows.includes(y));
+                    const newLines = Array.from({ length: linesClearedThisTurn }, () => Array(COLS).fill(0));
+                    board = [...newLines, ...newBoard];
+
+                    if (linesClearedThisTurn === 2) {
+                        firewall.charges = Math.min(3, firewall.charges + 1);
+                    }
+                }
+                updateScoreboard();
+                updateLevel();
+            }
+        }
+
+        function triggerFirewallDestruction(onCompleteCallback) {
+            animation = { type: 'firewall', duration: 300, startTime: performance.now() };
+            // NO ponemos player.matrix en null inmediatamente, lo hacemos después
+            firewall.charges--; 
+            preventedAttacksCount++;
+            score += 500 * level;
+            updateScoreboard();
+            setTimeout(() => {
+                animation = null;
+                player.matrix = null; // Ahora sí eliminamos la pieza
+                onCompleteCallback();
+            }, 300);
+        }
+
+        function triggerBoardClearAnimation(onCompleteCallback) {
+            animation = { type: 'boardClear', duration: 500, startTime: performance.now() };
+            player.matrix = null;
+            setTimeout(() => {
+                board = createBoard();
+                animation = null;
+                onCompleteCallback();
+            }, 500);
+        }
+
+        function updatePowerUpCount() {
+            powerUpCountElement.textContent = preventedAttacksCount;
+            return preventedAttacksCount;
+        }
+
+        function updateScoreboard() {
+            scoreElement.textContent = score; 
+            linesElement.textContent = linesCleared; 
+            levelElement.textContent = level; 
+            updatePowerUpCount(); 
+        }
+        function updateLevel() {  
+            const newLevel = Math.floor(linesCleared / 5) + 1;
+            if (newLevel > level) { 
+                level = newLevel; 
+                initialDropInterval = Math.max(80, initialDropInterval - 40); 
+                dropInterval = initialDropInterval; 
+            } 
+        }
+        
+        function showMessage(text, type = "gameover") { 
+            attackWarningElement.style.display = 'none'; secureMessageElement.style.display = 'none';
+            if (type === "gameover") {
+                const finalPowerUpCount = preventedAttacksCount;
+                const powerUpBonus = finalPowerUpCount * 1000;
+                finalScoreForRanking = score + powerUpBonus;
+                const powerUpIconHTML = `<img src="${ANTIVIRUS_IMAGE_URL}" class="final-bonus-icon">`;
+                
+                let recordText = '';
+                const scores = JSON.parse(localStorage.getItem('cybertrisScores')) || [];
+                scores.sort((a, b) => b.score - a.score);
+                
+                const isNewRecord = scores.length === 0 || finalScoreForRanking > scores[0].score;
+                if (isNewRecord) {
+                    recordText = '<p style="font-size: 1.2em; color: var(--color-gold);">¡Nuevo Récord! 🥳</p>';
+                }
+
+                messageText.innerHTML = `¡SISTEMA COMPROMETIDO!<br>Las defensas han caído.<br>${recordText}<span class="text-success">Puntaje: ${score}</span><br><span class="text-success">${powerUpIconHTML} ¡${finalPowerUpCount} Ataques Prevenidos!: +${powerUpBonus} ✨</span><br><span class="text-success">Puntaje Final: ${finalScoreForRanking}</span>`;
+                messageBox.className = ''; 
+                restartButton.style.display = 'inline-block';
+                saveScoreButton.style.display = 'inline-block';
+                resumeButton.style.display = 'none';
+            } else if (type === "paused") {
+                messageText.innerHTML = text;
+                messageBox.className = 'paused'; 
+                restartButton.style.display = 'inline-block';
+                saveScoreButton.style.display = 'none';
+                resumeButton.style.display = 'inline-block';
+            }
+            messageBox.style.display = 'block';
+            updateMenuButtons();
+        }
+
+        function showScreen(screenId) {
+            // Ocultar TODAS las pantallas y modales
+            allScreens.forEach(screen => {
+                screen.style.display = 'none';
+            });
+            messageBox.style.display = 'none';
+            saveScoreScreen.style.display = 'none';
+            
+            // Mostrar la pantalla solicitada
+            const activeScreen = document.getElementById(screenId);
+            if (activeScreen) {
+                activeScreen.style.display = 'flex';
+            }
+            updateMenuButtons();
+        }
+
+        function gameLoop(time = 0) { 
+            requestAnimationFrame(gameLoop);
+            
+            // Inicializar lastTime en el primer frame si está en 0
+            if (lastTime === 0) lastTime = time;
+            
+            const deltaTime = time - lastTime;
+            
+            // Pantalla de inicio - siempre manejar gamepad
+            if (isScreenVisible(startScreen)) {
+                handleGamepadInput(deltaTime || 16);
+                lastTime = time;
+                return;
+            }
+            
+            // Si no hay juego, no hacer nada
+            if (!board || !player.matrix) {
+                lastTime = time;
+                return;
+            }
+            
+            lastTime = time;
+            
+            handleGamepadInput(deltaTime);
+            
+            // Game Over - solo mostrar mensaje si estamos en la pantalla de juego
+            if (gameOver && isScreenVisible(gameContainer)) { 
+                draw();
+                if (!isScreenVisible(messageBox) && !isScreenVisible(saveScoreScreen) && !isScreenVisible(rankingScreen)) {
+                    showMessage("", "gameover");
+                }
+                return; 
+            }
+            
+            // Si gameOver pero NO estamos en pantalla de juego, salir
+            if (gameOver) {
+                return;
+            }
+            
+            // Pausa o animación
+            if (gamePaused || animation) {
+                draw();
+                return; 
+            }
+            
+            // Lógica del juego
+            gameLoopDropCounter += deltaTime;
+
+            let currentEffectiveDropInterval = dropInterval;
+            if (player.name === 'Ransomware') {
+                currentEffectiveDropInterval = player.pos.y > 1 ? 50 : 200; 
+            }
+
+            if (gameLoopDropCounter > currentEffectiveDropInterval) { 
+                playerDrop(); 
+                gameLoopDropCounter = 0; 
+            }
+            
+            // DIBUJAR SIEMPRE
+            draw(); 
+        }
+
+        function initializeGame() { 
+            board = createBoard(); 
+            score = 0; 
+            linesCleared = 0; 
+            level = 1;
+            gameOver = false; 
+            gamePaused = false; 
+            pieceCounter = 0; 
+            preventedAttacksCount = 0;
+            spawnAntivirusNext = false; 
+            nextInstanceId = 1; 
+            activeThreatContext = null; 
+            ransomSolutionToggle = false;
+            attackShuffleBag = []; 
+            firewall = { row: 2, charges: 0 };
+            animation = null;
+            
+            setNewThreatThresholds(); 
+            initialDropInterval = 500;
+            dropInterval = initialDropInterval; 
+            
+            calculateBlockSize();
+            
+            player.pos = { x: 0, y: 0 };
+            player.matrix = null;
+            player.moveDirection = 0;
+            player.moveTimer = 0;
+            player.softDropTimer = 0;
+            
+            getRandomPiece(); 
+            updateScoreboard(); 
+            
+            messageBox.style.display = 'none'; 
+            showScreen('gameContainer');
+            
+            lastTime = performance.now(); 
+            gameLoopDropCounter = 0;
+        }
+        
+      function returnToStartScreen() { 
+    window.location.href = 'c1p.html';
+        }
+        
+        function showSaveScoreScreen() {
+            allScreens.forEach(screen => screen.style.display = 'none');
+            messageBox.style.display = 'none';
+            saveScoreScreen.style.display = 'flex';
+            playerNombreInput.value = '';
+            playerApellidoInput.value = '';
+            playerEmailInput.value = '';
+            saveErrorText.style.display = 'none';
+            saveLoadingText.style.display = 'none';
+            submitScoreButton.style.display = 'inline-block';
+            finalScoreDisplay.textContent = `Puntaje Final: ${finalScoreForRanking}`;
+            playerNombreInput.focus();
+            updateMenuButtons();
+        }
+
+        async function saveScore() {
+            const nombre = playerNombreInput.value.trim();
+            const apellido = playerApellidoInput.value.trim();
+            const email = playerEmailInput.value.trim().toLowerCase();
+
+            if (!nombre || !apellido || !email) {
+                saveErrorText.textContent = 'Completá todos los campos.';
+                saveErrorText.style.display = 'block';
+                return;
+            }
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                saveErrorText.textContent = 'El correo no es válido.';
+                saveErrorText.style.display = 'block';
+                return;
+            }
+            if (!db) {
+                saveErrorText.textContent = 'Sin conexión a la base de datos.';
+                saveErrorText.style.display = 'block';
+                return;
+            }
+
+            saveErrorText.style.display = 'none';
+            submitScoreButton.style.display = 'none';
+            saveLoadingText.style.display = 'block';
+
+            try {
+                const colRef = db.collection(SCORES_COLLECTION);
+                const existing = await colRef.where('email', '==', email).get();
+                if (!existing.empty) {
+                    const doc = existing.docs[0];
+                    if (finalScoreForRanking > doc.data().score) {
+                        await doc.ref.update({ score: finalScoreForRanking, nombre, apellido, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+                    }
+                } else {
+                    await colRef.add({ nombre, apellido, email, score: finalScoreForRanking, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+                }
+                displayRanking();
+            } catch(e) {
+                console.error(e);
+                saveLoadingText.style.display = 'none';
+                submitScoreButton.style.display = 'inline-block';
+                saveErrorText.textContent = 'Error al guardar. Verificá tu conexión.';
+                saveErrorText.style.display = 'block';
+            }
+        }
+
+        async function displayRanking() {
+            messageBox.style.display = 'none';
+            saveScoreScreen.style.display = 'none';
+            showScreen('ranking-screen');
+            rankingList.innerHTML = '';
+            rankingLoading.style.display = 'block';
+
+            try {
+                const snapshot = await db.collection(SCORES_COLLECTION)
+                    .orderBy('score', 'desc').limit(10).get();
+                rankingLoading.style.display = 'none';
+                rankingList.innerHTML = '';
+                let rankIndex = 0;
+                snapshot.forEach((doc) => {
+                    const s = doc.data();
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span class="rank-name">${rankIndex + 1}. ${s.nombre} ${s.apellido}</span><span class="rank-score">${s.score}</span>`;
+                    rankingList.appendChild(li);
+                    rankIndex++;
+                });
+            } catch(e) {
+                rankingLoading.textContent = 'Error al cargar el ranking.';
+            }
+            updateMenuButtons();
+        }
+        
+        function handleResponsiveLayout() {
+            const controls = document.querySelector('.controls');
+            const infoPanel = document.querySelector('.info-panel');
+            const gameContainer = document.getElementById('gameContainer');
+            const logoIngame = infoPanel.querySelector('.logo-ingame');
+
+            if (window.innerWidth < 768) {
+                if (controls.parentElement === infoPanel) {
+                     gameContainer.appendChild(controls);
+                }
+            } else {
+                if (controls.parentElement !== infoPanel) {
+                    infoPanel.insertBefore(controls, logoIngame);
+                }
+            }
+        }
+
+        function togglePause() { 
+            if (gameOver) return; 
+            gamePaused = !gamePaused; 
+            if (gamePaused) { 
+                showMessage("Juego Pausado", "paused");
+                updateMenuButtons();
+            } 
+            else { 
+                messageBox.style.display = 'none'; 
+                lastTime = performance.now(); 
+            } 
+        }
+        
+        function updateMenuButtons() {
+            // Limpiar TODAS las selecciones anteriores de TODOS los botones posibles
+            [startGameButton, restartButton, saveScoreButton, resumeButton, submitScoreButton, playAgainButton, adminLoginButton, adminBackButton, adminLogoutButton].forEach(btn => {
+                if (btn) btn.classList.remove('gamepad-selected');
+            });
+            
+            // Determinar qué botones están visibles
+            currentMenuButtons = [];
+            
+            if (isScreenVisible(startScreen)) {
+                currentMenuButtons = [startGameButton];
+            } else if (isScreenVisible(messageBox)) {
+                if (restartButton.style.display !== 'none') currentMenuButtons.push(restartButton);
+                if (saveScoreButton.style.display !== 'none') currentMenuButtons.push(saveScoreButton);
+                if (resumeButton.style.display !== 'none') currentMenuButtons.push(resumeButton);
+            } else if (isScreenVisible(saveScoreScreen)) {
+                currentMenuButtons = [submitScoreButton];
+            } else if (isScreenVisible(rankingScreen)) {
+                currentMenuButtons = [playAgainButton];
+            }
+            
+            // Resetear índice y aplicar selección
+            selectedMenuButtonIndex = 0;
+            if (currentMenuButtons.length > 0) {
+                currentMenuButtons[0].classList.add('gamepad-selected');
+            }
+        }
+        
+        function navigateMenu(direction) {
+            if (currentMenuButtons.length === 0) return;
+            
+            // Remover selección actual
+            currentMenuButtons[selectedMenuButtonIndex].classList.remove('gamepad-selected');
+            
+            // Calcular nuevo índice
+            selectedMenuButtonIndex += direction;
+            
+            // Wrap around
+            if (selectedMenuButtonIndex < 0) {
+                selectedMenuButtonIndex = currentMenuButtons.length - 1;
+            } else if (selectedMenuButtonIndex >= currentMenuButtons.length) {
+                selectedMenuButtonIndex = 0;
+            }
+            
+            // Aplicar nueva selección
+            currentMenuButtons[selectedMenuButtonIndex].classList.add('gamepad-selected');
+        }
+        
+        function confirmMenuSelection() {
+            if (currentMenuButtons.length > 0 && currentMenuButtons[selectedMenuButtonIndex]) {
+                currentMenuButtons[selectedMenuButtonIndex].click();
+            }
+        }
+        
+        // --- Gamepad Logic ---
+        const prevButtonStates = [{ 0: false, 1: false, 2: false, 3: false, 4: false, 7: false, 8: false, 9: false, 14: false, 15: false }];
+        
+        function handleGamepadInput(deltaTime) {
+            let gamepads;
+            try {
+                gamepads = navigator.getGamepads();
+                if (!gamepads || !gamepads[0]) return;
+            } catch (e) {
+                // Gamepad API no disponible en este contexto (iframe/artifact)
+                // Funcionará cuando se use el archivo HTML localmente
+                return;
+            }
+            
+            const gp = gamepads[0];
+            
+            // Botones principales (expandidos para más opciones)
+            const btn0Pressed = gp.buttons[0] && gp.buttons[0].pressed; // A / X-Cross
+            const btn1Pressed = gp.buttons[1] && gp.buttons[1].pressed; // B / Circle
+            const btn2Pressed = gp.buttons[2] && gp.buttons[2].pressed; // X / Square
+            const btn3Pressed = gp.buttons[3] && gp.buttons[3].pressed; // Y / Triangle
+            const btn4Pressed = gp.buttons[4] && gp.buttons[4].pressed; // LB / L1
+            const btn7Pressed = gp.buttons[7] && gp.buttons[7].pressed; // RT / R2
+            const btn8Pressed = gp.buttons[8] && gp.buttons[8].pressed; // Select / Share
+            const startButtonPressed = gp.buttons[9] && gp.buttons[9].pressed;
+            
+            const btn0IsNewPress = btn0Pressed && !prevButtonStates[0][0];
+            const btn1IsNewPress = btn1Pressed && !prevButtonStates[0][1];
+            const btn2IsNewPress = btn2Pressed && !prevButtonStates[0][2];
+            const btn3IsNewPress = btn3Pressed && !prevButtonStates[0][3];
+            const btn4IsNewPress = btn4Pressed && !prevButtonStates[0][4];
+            const btn7IsNewPress = btn7Pressed && !prevButtonStates[0][7];
+            const btn8IsNewPress = btn8Pressed && !prevButtonStates[0][8];
+            const startIsNewPress = startButtonPressed && !prevButtonStates[0][9];
+            
+            // Cualquiera de estos botones puede confirmar/rotar
+            const anyActionButton = btn0IsNewPress || btn1IsNewPress || btn2IsNewPress || 
+                                   btn3IsNewPress || btn4IsNewPress || btn7IsNewPress || btn8IsNewPress;
+            
+            // D-Pad y ejes
+            const dpadLeft = gp.buttons[14] && gp.buttons[14].pressed;
+            const dpadRight = gp.buttons[15] && gp.buttons[15].pressed;
+            const dpadDown = gp.buttons[13] && gp.buttons[13].pressed;
+            const axisX = gp.axes[0];
+            const axisY = gp.axes[1];
+            const DEADZONE = 0.5;
+            
+            const leftPressed = dpadLeft || axisX < -DEADZONE;
+            const rightPressed = dpadRight || axisX > DEADZONE;
+            const leftIsNewPress = leftPressed && !prevButtonStates[0][14];
+            const rightIsNewPress = rightPressed && !prevButtonStates[0][15];
+
+            // NAVEGACIÓN EN MENÚS
+            const inMenu = isScreenVisible(startScreen) || 
+                          isScreenVisible(messageBox) || 
+                          isScreenVisible(saveScoreScreen) || 
+                          isScreenVisible(rankingScreen);
+            
+            if (inMenu) {
+                // Navegación izquierda/derecha en menús
+                if (leftIsNewPress) {
+                    navigateMenu(-1);
+                } else if (rightIsNewPress) {
+                    navigateMenu(1);
+                }
+                
+                // Confirmación con cualquier botón de acción
+                if (anyActionButton) {
+                    confirmMenuSelection();
+                }
+                
+                // Start también confirma o inicia juego
+                if (startIsNewPress) {
+                    if (isScreenVisible(startScreen)) {
+                        startGameButton.click();
+                    } else if (gamePaused) {
+                        resumeButton.click();
+                    }
+                }
+                
+                prevButtonStates[0][0] = btn0Pressed;
+                prevButtonStates[0][1] = btn1Pressed;
+                prevButtonStates[0][2] = btn2Pressed;
+                prevButtonStates[0][3] = btn3Pressed;
+                prevButtonStates[0][4] = btn4Pressed;
+                prevButtonStates[0][7] = btn7Pressed;
+                prevButtonStates[0][8] = btn8Pressed;
+                prevButtonStates[0][9] = startButtonPressed;
+                prevButtonStates[0][14] = leftPressed;
+                prevButtonStates[0][15] = rightPressed;
+                return;
+            }
+
+            // CONTROLES EN JUEGO
+            if (gameOver || gamePaused) {
+                prevButtonStates[0][0] = btn0Pressed;
+                prevButtonStates[0][1] = btn1Pressed;
+                prevButtonStates[0][2] = btn2Pressed;
+                prevButtonStates[0][3] = btn3Pressed;
+                prevButtonStates[0][4] = btn4Pressed;
+                prevButtonStates[0][7] = btn7Pressed;
+                prevButtonStates[0][8] = btn8Pressed;
+                prevButtonStates[0][9] = startButtonPressed;
+                prevButtonStates[0][14] = leftPressed;
+                prevButtonStates[0][15] = rightPressed;
+                return;
+            }
+            
+            if (anyActionButton) playerRotate();
+            if (startIsNewPress) togglePause();
+            
+            prevButtonStates[0][0] = btn0Pressed;
+            prevButtonStates[0][1] = btn1Pressed;
+            prevButtonStates[0][2] = btn2Pressed;
+            prevButtonStates[0][3] = btn3Pressed;
+            prevButtonStates[0][4] = btn4Pressed;
+            prevButtonStates[0][7] = btn7Pressed;
+            prevButtonStates[0][8] = btn8Pressed;
+            prevButtonStates[0][9] = startButtonPressed;
+            prevButtonStates[0][14] = leftPressed;
+            prevButtonStates[0][15] = rightPressed;
+
+            const wantsToMoveLeft = leftPressed;
+            const wantsToMoveRight = rightPressed;
+            const wantsToMoveDown = dpadDown || axisY > DEADZONE;
+
+            // Bajada rápida (soft drop) con control de velocidad
+            if (wantsToMoveDown) {
+                player.softDropTimer -= deltaTime;
+                if (player.softDropTimer <= 0) {
+                    playerDrop();
+                    gameLoopDropCounter = 0;
+                    player.softDropTimer = player.softDropDelay;
+                }
+            } else {
+                player.softDropTimer = 0;
+            }
+
+            // Movimiento horizontal
+            if (wantsToMoveLeft) {
+                if (player.moveDirection !== -1) {
+                    playerMove(-1);
+                    player.moveTimer = player.dasDelay;
+                    player.moveDirection = -1;
+                }
+            } else if (wantsToMoveRight) {
+                if (player.moveDirection !== 1) {
+                    playerMove(1);
+                    player.moveTimer = player.dasDelay;
+                    player.moveDirection = 1;
+                }
+            } else {
+                player.moveDirection = 0;
+            }
+
+            if(player.moveDirection !== 0) {
+                player.moveTimer -= deltaTime;
+                if(player.moveTimer <= 0) {
+                    playerMove(player.moveDirection);
+                    player.moveTimer = player.arrDelay;
+                }
+            }
+        }
+
+        // --- Admin Panel ---
+        function showAdminScreen() {
+            allScreens.forEach(s => s.style.display = 'none');
+            messageBox.style.display = 'none';
+            adminScreen.style.display = 'flex';
+            adminLogin.style.display = 'flex';
+            adminData.style.display = 'none';
+            adminPasswordInput.value = '';
+            adminLoginError.style.display = 'none';
+            adminPasswordInput.focus();
+            updateMenuButtons();
+        }
+
+        function adminLogin_submit() {
+            if (adminPasswordInput.value === ADMIN_PASSWORD) {
+                adminLogin.style.display = 'none';
+                adminData.style.display = 'flex';
+                adminData.style.flexDirection = 'column';
+                adminData.style.alignItems = 'center';
+                loadAdminData();
+            } else {
+                adminLoginError.style.display = 'block';
+                adminPasswordInput.value = '';
+            }
+        }
+
+        async function loadAdminData() {
+            adminLoading.style.display = 'block';
+            adminTableContainer.style.display = 'none';
+            exportCsvButton.style.display = 'none';
+            try {
+                const snapshot = await db.collection(SCORES_COLLECTION)
+                    .orderBy('score', 'desc').get();
+                adminLoading.style.display = 'none';
+                adminTableBody.innerHTML = '';
+                let adminIndex = 0;
+                snapshot.forEach((doc) => {
+                    const s = doc.data();
+                    const date = s.timestamp ? new Date(s.timestamp.toDate()).toLocaleDateString('es-AR') : '-';
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${adminIndex+1}</td><td>${s.nombre||''}</td><td>${s.apellido||''}</td><td>${s.email||''}</td><td>${s.score||0}</td><td>${date}</td>`;
+                    adminTableBody.appendChild(tr);
+                    adminIndex++;
+                });
+                adminTableContainer.style.display = 'block';
+                exportCsvButton.style.display = 'inline-block';
+            } catch(e) {
+                adminLoading.textContent = 'Error al cargar datos.';
+            }
+        }
+
+        function exportCsv() {
+            const rows = [['#','Nombre','Apellido','Email','Puntaje','Fecha']];
+            adminTableBody.querySelectorAll('tr').forEach((tr, i) => {
+                const cells = [...tr.querySelectorAll('td')].map(td => `"${td.textContent}"`);
+                rows.push(cells);
+            });
+            const csv = rows.map(r => r.join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = 'cybertris_scores.csv'; a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // --- Keyboard and Button Listeners ---
+        function initializeEventListeners() {
+            startGameButton.addEventListener('click', initializeGame);
+            restartButton.addEventListener('click', returnToStartScreen);
+            saveScoreButton.addEventListener('click', showSaveScoreScreen);
+            submitScoreButton.addEventListener('click', saveScore);
+            playAgainButton.addEventListener('click', returnToStartScreen);
+            adminAccessLink.addEventListener('click', showAdminScreen);
+            adminLoginButton.addEventListener('click', adminLogin_submit);
+            adminPasswordInput.addEventListener('keydown', e => { if (e.key === 'Enter') adminLogin_submit(); });
+            adminBackButton.addEventListener('click', () => showScreen('ranking-screen'));
+            adminLogoutButton.addEventListener('click', returnToStartScreen);
+            exportCsvButton.addEventListener('click', exportCsv);
+
+            resumeButton.addEventListener('click', togglePause);
+            
+            document.addEventListener('keydown', event => { 
+                if(isScreenVisible(saveScoreScreen) && event.key === 'Enter') {
+                    saveScore();
+                    return;
+                }
+                
+                // Navegación en menús con teclado
+                const inMenu = isScreenVisible(startScreen) || 
+                              isScreenVisible(messageBox) || 
+                              isScreenVisible(saveScoreScreen) || 
+                              isScreenVisible(rankingScreen);
+                
+                if (inMenu) {
+                    // Navegar con flechas o Tab
+                    if (event.key === 'ArrowLeft' || (event.key === 'Tab' && event.shiftKey)) {
+                        event.preventDefault();
+                        navigateMenu(-1);
+                        return;
+                    } else if (event.key === 'ArrowRight' || event.key === 'Tab') {
+                        event.preventDefault();
+                        navigateMenu(1);
+                        return;
+                    }
+                    
+                    // Confirmar con Enter o Espacio
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        confirmMenuSelection();
+                        return;
+                    }
+                }
+                
+                if (event.key.toLowerCase() === 'p') { 
+                    togglePause();
+                    return; 
+                }
+                if (gameOver || gamePaused || (player.noControls && player.name === 'Ransomware')) return;
+
+                if (event.key === 'ArrowLeft' || event.key.toLowerCase() === 'a') playerMove(-1);
+                else if (event.key === 'ArrowRight' || event.key.toLowerCase() === 'd') playerMove(1);
+                else if (event.key === 'ArrowDown' || event.key.toLowerCase() === 's') { playerDrop(); gameLoopDropCounter = 0; } 
+                else if (event.key === 'ArrowUp' || event.key.toLowerCase() === 'w' || event.key === ' ') { event.preventDefault(); playerRotate(); }
+            });
+            
+            document.getElementById('leftButton').addEventListener('click', () => {if (!gameOver && !gamePaused && !(player.noControls && player.name === 'Ransomware')) playerMove(-1);});
+            document.getElementById('rightButton').addEventListener('click', () => {if (!gameOver && !gamePaused && !(player.noControls && player.name === 'Ransomware')) playerMove(1);});
+            document.getElementById('downButton').addEventListener('click', () => {if (!gameOver && !gamePaused && !(player.noControls && player.name === 'Ransomware')) {playerDrop(); gameLoopDropCounter = 0;} });
+            document.getElementById('rotateButton').addEventListener('click', () => {if (!gameOver && !gamePaused && !(player.noControls && player.name === 'Ransomware')) playerRotate();});
+            
+            window.addEventListener('resize', () => { 
+                handleResponsiveLayout();
+                if (isScreenVisible(gameContainer)) { 
+                    calculateBlockSize(); 
+                    draw(); 
+                } 
+            });
+        }
+        
+        // --- Initial Load ---
+        function initialize() {
+            initFirebase();
+            handleResponsiveLayout();
+            calculateBlockSize();
+            updateMenuButtons();
+            initializeEventListeners();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Esperar a que el DOM esté completamente cargado
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initialize);
+        } else {
+            // DOM ya está listo
+            initialize();
+        }
+
+    </script>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-analytics-compat.js"></script>
+</body>
+</html>
