@@ -421,7 +421,6 @@
         const rankingList = document.getElementById('ranking-list');
         const rankingLoading = document.getElementById('ranking-loading');
         const playAgainButton = document.getElementById('playAgainButton');
-        const adminAccessLink = document.getElementById('adminAccessLink');
         const adminLogin = document.getElementById('admin-login');
         const adminData = document.getElementById('admin-data');
         const adminPasswordInput = document.getElementById('adminPasswordInput');
@@ -1208,12 +1207,10 @@
             }
             
             // DIBUJAR SIEMPRE
-            if (!window._loopLogged) { window._loopLogged = true; console.log('[CyberTris] Game loop reached draw() - player.matrix:', !!player.matrix, 'pos:', player.pos); }
             draw();
         }
 
         function initializeGame() {
-            console.log('[CyberTris] initializeGame called');
             board = createBoard();
             score = 0;
             linesCleared = 0; 
@@ -1243,12 +1240,10 @@
             player.softDropTimer = 0;
             
             getRandomPiece();
-            console.log('[CyberTris] After getRandomPiece - player.matrix:', player.matrix, 'gameOver:', gameOver, 'BLOCK_SIZE:', BLOCK_SIZE, 'canvas:', canvas.width, 'x', canvas.height);
             updateScoreboard();
 
             messageBox.style.display = 'none';
             showScreen('gameContainer');
-            console.log('[CyberTris] After showScreen - gameContainer display:', window.getComputedStyle(gameContainer).display, 'startScreen:', window.getComputedStyle(startScreen).display);
 
             lastTime = performance.now();
             gameLoopDropCounter = 0;
@@ -1665,7 +1660,6 @@
             saveScoreButton.addEventListener('click', showSaveScoreScreen);
             submitScoreButton.addEventListener('click', saveScore);
             playAgainButton.addEventListener('click', returnToStartScreen);
-            adminAccessLink.addEventListener('click', showAdminScreen);
             adminLoginButton.addEventListener('click', adminLogin_submit);
             adminPasswordInput.addEventListener('keydown', e => { if (e.key === 'Enter') adminLogin_submit(); });
             adminBackButton.addEventListener('click', () => showScreen('ranking-screen'));
