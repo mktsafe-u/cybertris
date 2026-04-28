@@ -222,8 +222,29 @@
             .info-panel .content-top { flex-direction: column; gap: 0; margin-bottom: auto; }
             .info-panel .logo-ingame { display: block; margin-top: auto; padding-top: 15px; }
             .info-panel .logo-ingame img { max-height: 22px; border-radius: 4px; opacity: 0.7; }
-            .controls { max-width: 100%; width: 100%; margin-top: 12px; }
-            .controls button { height: 52px; font-size: 1.6em; }
+            .game-area { flex: 1; align-self: stretch; }
+            .controls {
+                display: grid;
+                grid-template-columns: repeat(3, 60px);
+                grid-template-areas:
+                    "left rotate right"
+                    ". down .";
+                gap: 8px;
+                width: auto;
+                max-width: none;
+                margin-top: auto;
+                padding-top: 16px;
+                justify-content: center;
+            }
+            .controls button {
+                width: 60px; height: 60px;
+                flex: none;
+                font-size: 1.6em;
+            }
+            #leftButton   { grid-area: left; }
+            #rotateButton { grid-area: rotate; }
+            #rightButton  { grid-area: right; }
+            #downButton   { grid-area: down; }
         }
 
         #message-box, #save-score-screen {
@@ -437,6 +458,20 @@
             vertical-align: middle;
             margin-right: 8px;
             text-shadow: 0 0 10px var(--color-gold);
+        }
+        .mini-flag {
+            display: inline-block;
+            width: 22px; height: 22px;
+            border-radius: 3px;
+            border: 1px solid #000;
+            vertical-align: middle;
+            margin-right: 8px;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.2);
+        }
+        .mini-flag.xl {
+            width: 50px; height: 50px;
+            border-radius: 5px;
+            margin-right: 10px;
         }
     </style>
 </head>
@@ -654,6 +689,29 @@
             { name:'Túnez',          flag:'🇹🇳', bg:['#E70013','#FFFFFF'],            colors:['#E70013','#FFFFFF','#CC0010','#F0F0F0','#A81820','#E8E8E8','#C81818'] },
             { name:'Gales',          flag:'🐉', bg:['#C8102E','#FFFFFF'],             colors:['#C8102E','#FFFFFF','#A80C25','#F0F0F0','#B0142A','#E8E8E8','#C81828'] },
         ];
+        const COUNTRY_CODES = {
+            'Argentina':'AR','Brasil':'BR','Francia':'FR','Alemania':'DE','España':'ES',
+            'Portugal':'PT','Inglaterra':'EN','Países Bajos':'NL','Bélgica':'BE','Croacia':'HR',
+            'Marruecos':'MA','Senegal':'SN','Ghana':'GH','Camerún':'CM','México':'MX',
+            'USA':'US','Canadá':'CA','Ecuador':'EC','Uruguay':'UY','Costa Rica':'CR',
+            'Japón':'JP','Corea del Sur':'KR','Australia':'AU','Arabia Saudita':'SA','Irán':'IR',
+            'Polonia':'PL','Dinamarca':'DK','Suiza':'CH','Serbia':'RS','Qatar':'QA',
+            'Túnez':'TN','Gales':'WA'
+        };
+
+        function makeMiniFlag(countryName, sizeClass) {
+            const country = COUNTRIES.find(c => c.name === countryName);
+            let gradient = '#222';
+            if (country) {
+                const bg = country.bg;
+                gradient = bg.length === 2
+                    ? `linear-gradient(to right, ${bg[0]} 50%, ${bg[1]} 50%)`
+                    : `linear-gradient(to right, ${bg[0]} 33.33%, ${bg[1]} 33.33% 66.66%, ${bg[2]} 66.66%)`;
+            }
+            const cls = sizeClass ? `mini-flag ${sizeClass}` : 'mini-flag';
+            return `<span class="${cls}" style="background:${gradient}"></span>`;
+        }
+
         let hoveredCountryIndex = 0;
         let selectedCountry = null;
 
@@ -684,7 +742,8 @@
                     : `linear-gradient(to right, ${bg[0]} 33.33%, ${bg[1]} 33.33% 66.66%, ${bg[2]} 66.66%)`;
                 item.style.background = gradient;
                 const swatches = country.colors.map(c => `<span style="background:${c}"></span>`).join('');
-                item.innerHTML = `<span class="wf">${country.flag}</span><span class="wn">${country.name}</span><span class="wp">${swatches}</span>`;
+                const code = COUNTRY_CODES[country.name] || '';
+                item.innerHTML = `<span class="wf">${code}</span><span class="wn">${country.name}</span><span class="wp">${swatches}</span>`;
                 item.addEventListener('click', () => {
                     if (index === hoveredCountryIndex) startWithCountry();
                     else hoverCountry(index);
@@ -1423,7 +1482,7 @@
                 }
 
                 const flagHTML = selectedCountry
-                    ? `<div style="margin-bottom:6px;"><span class="final-flag">${selectedCountry.flag}</span><span style="color:var(--color-gold); font-size:1.1em;">${selectedCountry.name}</span></div>`
+                    ? `<div style="margin-bottom:6px;">${makeMiniFlag(selectedCountry.name, 'xl')}<span style="color:var(--color-gold); font-size:1.1em;">${selectedCountry.name}</span></div>`
                     : '';
                 messageText.innerHTML = `¡SISTEMA COMPROMETIDO!<br>Las defensas han caído.<br>${flagHTML}${recordText}<span class="text-success">Puntaje: ${score}</span><br><span class="text-success">${powerUpIconHTML} ¡${finalPowerUpCount} Ataques Prevenidos!: +${powerUpBonus} ✨</span><br><span class="text-success">Puntaje Final: ${finalScoreForRanking}</span>`;
                 messageBox.className = ''; 
@@ -1651,7 +1710,7 @@
                 snapshot.forEach((doc) => {
                     const s = doc.data();
                     const li = document.createElement('li');
-                    const flagPart = s.flag ? `${s.flag} ` : '';
+                    const flagPart = s.country ? makeMiniFlag(s.country, '') : '';
                     li.innerHTML = `<span class="rank-name">${rankIndex + 1}. ${flagPart}${s.nombre} ${s.apellido}</span><span class="rank-score">${s.score}</span>`;
                     rankingList.appendChild(li);
                     rankIndex++;
@@ -1664,17 +1723,9 @@
         
         function handleResponsiveLayout() {
             const controls = document.querySelector('.controls');
-            const infoPanel = document.querySelector('.info-panel');
             const gameArea = document.querySelector('.game-area');
-            const logoIngame = infoPanel.querySelector('.logo-ingame');
-            if (window.innerWidth >= 768) {
-                if (controls.parentElement !== infoPanel) {
-                    infoPanel.insertBefore(controls, logoIngame);
-                }
-            } else {
-                if (controls.parentElement !== gameArea) {
-                    gameArea.appendChild(controls);
-                }
+            if (controls.parentElement !== gameArea) {
+                gameArea.appendChild(controls);
             }
         }
 
