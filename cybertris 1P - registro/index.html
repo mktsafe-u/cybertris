@@ -25,8 +25,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Permissions-Policy" content="gamepad=*">
-    <title>CyberTris v5.0</title>
-    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <title>CyberTris: World Cup Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=VT323&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
@@ -42,10 +42,18 @@
             --color-piece-s-green: #01A76E; /* Nuevo color para la pieza S */
             --color-text-on-danger: #FFFFFF;
             --color-firewall: #00FF7F; /* Color para el nuevo efecto Firewall */
+            --wc-gold: #FFD700;
+            --wc-gold-dim: rgba(255, 215, 0, 0.12);
+            --wc-overlay: rgba(5, 6, 41, 0.82);
         }
         body {
             font-family: 'VT323', monospace;
-            background-color: var(--color-tertiary-dark-blue);
+            background-color: #050629;
+            background-image: url('fondo_cancha.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
             color: var(--color-tertiary-neon);
             display: flex;
             flex-direction: column;
@@ -55,12 +63,39 @@
             margin: 0;
             overflow-y: auto;
             overscroll-behavior: none;
-            padding: 10px;
+            padding: 10px 10px calc(20px + env(safe-area-inset-bottom)) 10px;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
             -webkit-user-select: none;
         }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: var(--wc-overlay);
+            z-index: 0;
+            pointer-events: none;
+        }
+        .screen, .game-container, #save-score-screen { position: relative; z-index: 1; }
+        #message-box { z-index: 1000; }
+        #attackWarning, #secureMessage { z-index: 2000; }
+        .wce-subtitle {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.55em, 2.6vw, 0.78em);
+            color: var(--wc-gold);
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px var(--wc-gold), 0 0 16px var(--wc-gold);
+            border: 1px solid var(--wc-gold);
+            padding: 3px 12px;
+            border-radius: 20px;
+            background: var(--wc-gold-dim);
+            margin: 0 0 14px 0;
+            display: inline-block;
+            white-space: nowrap;
+            max-width: 100%;
+        }
+        #start-screen h1 { font-family: 'Orbitron', sans-serif; }
         .screen {
             display: none;
             flex-direction: column; align-items: center; justify-content: center; text-align: center;
@@ -257,16 +292,152 @@
         }
 
 
-        .piece-I { background-color: var(--color-primary); }
-        .piece-L { background-color: var(--color-tertiary-bright-blue); }
-        .piece-J { background-color: var(--color-tertiary-neon); }
-        .piece-T { background-color: var(--color-primary); }
-        .piece-O { background-color: var(--color-tertiary-bright-blue); }
-        .piece-S { background-color: var(--color-piece-s-green); }
-        .piece-Z { background-color: var(--color-tertiary-neon); }
+        .piece-I { background-color: var(--piece-I-color, #0054F2); }
+        .piece-L { background-color: var(--piece-L-color, #1201FF); }
+        .piece-J { background-color: var(--piece-J-color, #03FF9E); }
+        .piece-T { background-color: var(--piece-T-color, #0054F2); }
+        .piece-O { background-color: var(--piece-O-color, #1201FF); }
+        .piece-S { background-color: var(--piece-S-color, #01A76E); }
+        .piece-Z { background-color: var(--piece-Z-color, #03FF9E); }
         .piece-CYBER { background-color: var(--color-danger); }
         .piece-RANSOM { background-color: var(--color-danger); }
         .piece-ANTIVIRUS { background-color: var(--color-gold); }
+
+        /* ===== COUNTRY SELECTION SCREEN (wheel) ===== */
+        #country-screen {
+            max-width: 460px;
+            width: 95%;
+            padding: 14px 14px 18px;
+        }
+        #country-screen h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5em;
+            color: var(--color-gold);
+            text-shadow: 0 0 10px var(--color-gold), 0 0 20px var(--color-gold);
+            margin: 4px 0 4px;
+            letter-spacing: 1px;
+            line-height: 1.15;
+        }
+        .country-subtitle {
+            font-size: 1em;
+            color: var(--color-tertiary-neon);
+            margin-bottom: 8px;
+            opacity: 0.85;
+        }
+
+        #country-wheel {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+        .wheel-arrow {
+            background: rgba(0, 84, 242, 0.4);
+            color: var(--color-gold);
+            border: 2px solid var(--color-gold);
+            border-radius: 50%;
+            width: 38px; height: 38px;
+            font-size: 1.2em;
+            cursor: pointer;
+            font-family: 'VT323', monospace;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 0 8px rgba(255,215,0,0.4);
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .wheel-arrow:active { transform: scale(0.92); }
+        #wheel-viewport {
+            position: relative;
+            flex: 1;
+            min-width: 0;
+            height: 280px;
+            overflow: hidden;
+            border: 2px solid var(--color-primary);
+            border-radius: 12px;
+            background: rgba(9, 11, 82, 0.55);
+            box-shadow: inset 0 0 14px rgba(0,0,0,0.6);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
+                    mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
+            touch-action: pan-y;
+        }
+        #wheel-track {
+            position: absolute;
+            left: 8px; right: 8px;
+            top: 50%;
+            transition: transform 0.28s cubic-bezier(.2,.85,.25,1);
+            will-change: transform;
+        }
+        #wheel-track.dragging { transition: none; }
+        .wheel-item {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 10px;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            box-sizing: border-box;
+            cursor: pointer;
+            transition: opacity 0.25s ease, filter 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+        }
+        .wheel-item .wf {
+            font-size: 2.2em; line-height: 1;
+            text-shadow:
+                1px 1px 0 #000, -1px 1px 0 #000,
+                1px -1px 0 #000, -1px -1px 0 #000;
+        }
+        .wheel-item .wn {
+            font-size: 1.4em;
+            color: #FFFFFF;
+            text-shadow: 0 0 6px #03FF9E;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+            text-align: left;
+        }
+        .wheel-item .wp {
+            display: flex; gap: 3px;
+            flex-shrink: 0;
+        }
+        .wheel-item .wp span {
+            width: 10px; height: 10px;
+            border-radius: 2px;
+            border: 1px solid #000;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.25);
+        }
+        .wheel-item.active {
+            border-color: var(--color-gold);
+            background: rgba(0, 84, 242, 0.22);
+            box-shadow: 0 0 16px rgba(255,215,0,0.5), 0 0 28px rgba(255,215,0,0.3);
+            transform: scale(1.04);
+        }
+        .wheel-item.active .wn {
+            color: var(--color-gold);
+            text-shadow: 0 0 8px var(--color-gold);
+        }
+        .wheel-item.dist-1 { opacity: 0.45; filter: blur(1.2px); }
+        .wheel-item.dist-2 { opacity: 0.18; filter: blur(2.4px); }
+        .wheel-item.dist-far { opacity: 0; pointer-events: none; }
+
+        @media (min-width: 768px) {
+            #country-screen { max-width: 560px; }
+            #country-screen h1 { font-size: 2.2em; }
+            #wheel-viewport { height: 320px; }
+            .wheel-arrow { width: 44px; height: 44px; font-size: 1.4em; }
+        }
+
+        .final-flag {
+            font-size: 2.2em;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+            text-shadow: 0 0 10px var(--color-gold);
+        }
     </style>
 </head>
 <body>
@@ -275,7 +446,8 @@
             <img id="safeULogoStart" src="logo-safe-u.png" alt="Safe-U Logo">
         </div>
         <h1>CyberTris</h1>
-        <h2 class="intro-heading">¡Defiende tu Infraestructura Digital!</h2>
+        <p class="wce-subtitle">⚽ WORLD CUP EDITION ⚽</p>
+        <h2 class="intro-heading">¡Defendé tu arco digital!</h2>
         <div class="intro-section">
             <svg class="intro-icon" fill="var(--color-primary)" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 0L1 4V11C1 13.45 2.89 15.67 5.39 16.56L10 18L14.61 16.56C17.11 15.67 19 13.45 19 11V4L10 0ZM10 2.17L17 5.11V11C17 12.5 16.06 13.89 14.66 14.44L10 15.82L5.34 14.44C3.94 13.89 3 12.5 3 11V5.11L10 2.17Z"/></svg>
             <p>Acomodá rápido las piezas y preparate para recibir ataques.</p>
@@ -284,13 +456,26 @@
             <img id="introAntivirusIcon" src="icon-safe-u.png" alt="Antivirus Icon" class="intro-icon-img">
             <p>Safe-U estará allí para ayudarte a combatirlos.</p>
         </div>
-        <button id="startGameButton" class="action-button">Iniciar Juego</button>
+        <button id="startGameButton" class="action-button">⚽ Iniciar Juego</button>
+    </div>
+
+    <div id="country-screen" class="screen">
+        <h1>⚽ ELEGÍ TU SELECCIÓN ⚽</h1>
+        <p class="country-subtitle">Las piezas tomarán los colores de tu país</p>
+        <div id="country-wheel">
+            <button id="wheelPrev" class="wheel-arrow" aria-label="Anterior">▲</button>
+            <div id="wheel-viewport">
+                <div id="wheel-track"></div>
+            </div>
+            <button id="wheelNext" class="wheel-arrow" aria-label="Siguiente">▼</button>
+        </div>
+        <button id="confirmCountryButton" class="action-button">⚽ ¡JUGAR!</button>
     </div>
 
     <div class="game-container" id="gameContainer">
         <div class="info-panel">
             <div class="content-top">
-                <h2>CyberTris</h2>
+                <h2>⚽ WCE</h2>
                 <p>Pts: <span id="score">0</span></p>
                 <p>Líneas: <span id="lines">0</span></p>
                 <p>Nv: <span id="level">1</span></p>
@@ -361,10 +546,12 @@
     <script>
         // --- Elementos del DOM ---
         const startScreen = document.getElementById('start-screen');
+        const countryScreen = document.getElementById('country-screen');
         const gameContainer = document.getElementById('gameContainer');
         const saveScoreScreen = document.getElementById('save-score-screen');
         const rankingScreen = document.getElementById('ranking-screen');
-        const allScreens = [startScreen, gameContainer, saveScoreScreen, rankingScreen];
+        const allScreens = [startScreen, countryScreen, gameContainer, saveScoreScreen, rankingScreen];
+        const confirmCountryButton = document.getElementById('confirmCountryButton');
 
         const startGameButton = document.getElementById('startGameButton');
         const canvas = document.getElementById('cyberTrisCanvas');
@@ -431,6 +618,162 @@
         const FIREWALL_LETTERS = ['🛡️','F','I','R','E','W','A','L','L','🛡️'];
 
         const RANSOMWARE_LETTERS = ['R', 'A', 'N', 'S', 'O', 'M', 'W', 'A', 'R', 'E'];
+
+        // --- Selecciones mundialistas con paletas (I,L,J,T,O,S,Z) ---
+        const COUNTRIES = [
+            { name:'Argentina',      flag:'🇦🇷', bg:['#74ACDF','#FFFFFF'],            colors:['#74ACDF','#FFFFFF','#5B9AC8','#9DCDE5','#4D8ABF','#B8D9F0','#3F7DB0'] },
+            { name:'Brasil',         flag:'🇧🇷', bg:['#009B3A','#FEDF00'],            colors:['#00B344','#FEDF00','#00942E','#FFE840','#00853A','#FFC000','#00A050'] },
+            { name:'Francia',        flag:'🇫🇷', bg:['#002395','#FFFFFF','#ED2939'], colors:['#1E4FBE','#FFFFFF','#ED2939','#2050C8','#FF4D60','#3060D8','#CC2030'] },
+            { name:'Alemania',       flag:'🇩🇪', bg:['#555555','#DD0000','#FFCE00'], colors:['#555555','#DD0000','#FFCE00','#777777','#FF2222','#FFD700','#999999'] },
+            { name:'España',         flag:'🇪🇸', bg:['#AA151B','#F1BF00','#AA151B'], colors:['#C81C24','#F1BF00','#CC2020','#FFD700','#A41218','#FFE040','#B81820'] },
+            { name:'Portugal',       flag:'🇵🇹', bg:['#006600','#FF0000'],            colors:['#008838','#FF4444','#00AA00','#FF6666','#00B040','#CC0000','#009A30'] },
+            { name:'Inglaterra',     flag:'🇬🇧', bg:['#CF111A','#FFFFFF'],            colors:['#FFFFFF','#CF111A','#F0F0F0','#E03040','#D0D0D0','#A80D14','#B0B0B0'] },
+            { name:'Países Bajos',   flag:'🇳🇱', bg:['#AE1C28','#FFFFFF','#21468B'], colors:['#FF6600','#FFFFFF','#FF8833','#2A60AE','#FF4400','#FF9955','#CC4400'] },
+            { name:'Bélgica',        flag:'🇧🇪', bg:['#555555','#FAE042','#ED2939'], colors:['#555555','#FAE042','#ED2939','#777777','#FFD700','#CC2030','#999999'] },
+            { name:'Croacia',        flag:'🇭🇷', bg:['#FF0000','#FFFFFF'],            colors:['#FF0000','#FFFFFF','#CC0000','#F0F0F0','#A81818','#E0E0E0','#C81818'] },
+            { name:'Marruecos',      flag:'🇲🇦', bg:['#C1272D','#006233'],            colors:['#C1272D','#00A055','#D9363C','#007A45','#A41E23','#00B860','#C13030'] },
+            { name:'Senegal',        flag:'🇸🇳', bg:['#00853F','#FDEF42','#C60C30'], colors:['#00A848','#FDEF42','#C60C30','#00B850','#FFE840','#CC0020','#00984A'] },
+            { name:'Ghana',          flag:'🇬🇭', bg:['#006B3F','#FCD116','#CE1126'], colors:['#00945A','#FCD116','#CE1126','#00A860','#FFD700','#B00F20','#00B068'] },
+            { name:'Camerún',        flag:'🇨🇲', bg:['#007A5E','#CE1126','#FCD116'], colors:['#00A878','#CE1126','#FCD116','#00B888','#B00F20','#FFD700','#00C098'] },
+            { name:'México',         flag:'🇲🇽', bg:['#006847','#FFFFFF','#CE1126'], colors:['#00945A','#FFFFFF','#CE1126','#00A868','#F0F0F0','#B00F20','#00B078'] },
+            { name:'USA',            flag:'🇺🇸', bg:['#3C3B6E','#FFFFFF','#B22234'], colors:['#5755A0','#FFFFFF','#B22234','#6A68B0','#F0F0F0','#991A27','#5C5BC0'] },
+            { name:'Canadá',         flag:'🇨🇦', bg:['#FF0000','#FFFFFF','#FF0000'], colors:['#FF0000','#FFFFFF','#CC0000','#F0F0F0','#A81818','#E0E0E0','#C81818'] },
+            { name:'Ecuador',        flag:'🇪🇨', bg:['#FFD100','#003893','#C8102E'], colors:['#FFD100','#1850C0','#C8102E','#FFE840','#2050B5','#A80C25','#CC9900'] },
+            { name:'Uruguay',        flag:'🇺🇾', bg:['#75AADB','#FFFFFF'],            colors:['#75AADB','#FFFFFF','#5B9AC8','#9DCDE5','#4D8ABF','#C8E4F5','#3F7DB0'] },
+            { name:'Costa Rica',     flag:'🇨🇷', bg:['#002B7F','#FFFFFF','#CE1126'], colors:['#1E5BBE','#FFFFFF','#CE1126','#2A6AC8','#F0F0F0','#B00F20','#2050B0'] },
+            { name:'Japón',          flag:'🇯🇵', bg:['#FFFFFF','#BC002D'],            colors:['#BC002D','#FFFFFF','#E00035','#F0F0F0','#A01828','#E8E8E8','#B81830'] },
+            { name:'Corea del Sur',  flag:'🇰🇷', bg:['#FFFFFF','#003478'],            colors:['#1E5BBE','#CD2E3A','#2050B0','#E03040','#1A45A0','#B02030','#1538A0'] },
+            { name:'Australia',      flag:'🇦🇺', bg:['#1E5BBE','#CC0000'],            colors:['#00A050','#FFB81C','#008838','#FFC030','#00945A','#FFD060','#00A848'] },
+            { name:'Arabia Saudita', flag:'🇸🇦', bg:['#006C35','#FFFFFF'],            colors:['#00945A','#FFFFFF','#00A858','#F0F0F0','#00A050','#E0E0E0','#008838'] },
+            { name:'Irán',           flag:'🇮🇷', bg:['#239F40','#FFFFFF','#DA0000'], colors:['#239F40','#FFFFFF','#DA0000','#30BB55','#F0F0F0','#B00000','#288A38'] },
+            { name:'Polonia',        flag:'🇵🇱', bg:['#FFFFFF','#DC143C'],            colors:['#DC143C','#FFFFFF','#B01030','#F0F0F0','#B0142E','#E0E0E0','#C0142F'] },
+            { name:'Dinamarca',      flag:'🇩🇰', bg:['#C60C30','#FFFFFF'],            colors:['#C60C30','#FFFFFF','#A00020','#F0F0F0','#B81830','#E8E8E8','#C81828'] },
+            { name:'Suiza',          flag:'🇨🇭', bg:['#FF0000','#FFFFFF'],            colors:['#FF0000','#FFFFFF','#CC0000','#F0F0F0','#A81818','#E8E8E8','#C81818'] },
+            { name:'Serbia',         flag:'🇷🇸', bg:['#C6363C','#2A60AC','#FFFFFF'], colors:['#C6363C','#2A60AC','#A02830','#3070BC','#B82830','#2050B0','#B81820'] },
+            { name:'Qatar',          flag:'🇶🇦', bg:['#8D1B3D','#FFFFFF'],            colors:['#A02048','#FFFFFF','#B82850','#F0F0F0','#B82850','#E0E0E0','#A41E40'] },
+            { name:'Túnez',          flag:'🇹🇳', bg:['#E70013','#FFFFFF'],            colors:['#E70013','#FFFFFF','#CC0010','#F0F0F0','#A81820','#E8E8E8','#C81818'] },
+            { name:'Gales',          flag:'🐉', bg:['#C8102E','#FFFFFF'],             colors:['#C8102E','#FFFFFF','#A80C25','#F0F0F0','#B0142A','#E8E8E8','#C81828'] },
+        ];
+        let hoveredCountryIndex = 0;
+        let selectedCountry = null;
+
+        function applyCountryPalette(country) {
+            const r = document.documentElement;
+            const p = country.colors;
+            r.style.setProperty('--piece-I-color', p[0]);
+            r.style.setProperty('--piece-L-color', p[1]);
+            r.style.setProperty('--piece-J-color', p[2]);
+            r.style.setProperty('--piece-T-color', p[3]);
+            r.style.setProperty('--piece-O-color', p[4]);
+            r.style.setProperty('--piece-S-color', p[5]);
+            r.style.setProperty('--piece-Z-color', p[6]);
+        }
+
+        const WHEEL_ITEM_H = 70;
+
+        function buildCountryWheel() {
+            const track = document.getElementById('wheel-track');
+            track.innerHTML = '';
+            COUNTRIES.forEach((country, index) => {
+                const item = document.createElement('div');
+                item.className = 'wheel-item';
+                item.dataset.index = index;
+                const bg = country.bg;
+                const gradient = bg.length === 2
+                    ? `linear-gradient(to right, ${bg[0]} 50%, ${bg[1]} 50%)`
+                    : `linear-gradient(to right, ${bg[0]} 33.33%, ${bg[1]} 33.33% 66.66%, ${bg[2]} 66.66%)`;
+                item.style.background = gradient;
+                const swatches = country.colors.map(c => `<span style="background:${c}"></span>`).join('');
+                item.innerHTML = `<span class="wf">${country.flag}</span><span class="wn">${country.name}</span><span class="wp">${swatches}</span>`;
+                item.addEventListener('click', () => {
+                    if (index === hoveredCountryIndex) startWithCountry();
+                    else hoverCountry(index);
+                });
+                track.appendChild(item);
+            });
+        }
+
+        function hoverCountry(index) {
+            hoveredCountryIndex = index;
+            updateWheelPosition();
+        }
+
+        function updateWheelPosition() {
+            const track = document.getElementById('wheel-track');
+            if (!track) return;
+            track.style.transform = `translateY(${-(hoveredCountryIndex * WHEEL_ITEM_H + WHEEL_ITEM_H / 2)}px)`;
+            const items = track.querySelectorAll('.wheel-item');
+            items.forEach((it, i) => {
+                const d = Math.abs(i - hoveredCountryIndex);
+                it.classList.remove('active', 'dist-1', 'dist-2', 'dist-far');
+                if (d === 0) it.classList.add('active');
+                else if (d === 1) it.classList.add('dist-1');
+                else if (d === 2) it.classList.add('dist-2');
+                else it.classList.add('dist-far');
+            });
+        }
+
+        function setupWheelInteractions() {
+            const viewport = document.getElementById('wheel-viewport');
+            const track = document.getElementById('wheel-track');
+            document.getElementById('wheelPrev').addEventListener('click', () => {
+                hoverCountry((hoveredCountryIndex - 1 + COUNTRIES.length) % COUNTRIES.length);
+            });
+            document.getElementById('wheelNext').addEventListener('click', () => {
+                hoverCountry((hoveredCountryIndex + 1) % COUNTRIES.length);
+            });
+
+            // Swipe vertical (touch + mouse)
+            let dragging = false, startY = 0, accum = 0, baseIndex = 0;
+            viewport.addEventListener('pointerdown', (e) => {
+                dragging = true;
+                startY = e.clientY;
+                accum = 0;
+                baseIndex = hoveredCountryIndex;
+                track.classList.add('dragging');
+                viewport.setPointerCapture(e.pointerId);
+            });
+            viewport.addEventListener('pointermove', (e) => {
+                if (!dragging) return;
+                const dy = e.clientY - startY;
+                const offset = -(baseIndex * WHEEL_ITEM_H + WHEEL_ITEM_H / 2) + dy;
+                track.style.transform = `translateY(${offset}px)`;
+                accum = dy;
+            });
+            const endDrag = (e) => {
+                if (!dragging) return;
+                dragging = false;
+                track.classList.remove('dragging');
+                const steps = Math.round(-accum / WHEEL_ITEM_H);
+                let newIdx = baseIndex + steps;
+                newIdx = Math.max(0, Math.min(COUNTRIES.length - 1, newIdx));
+                hoverCountry(newIdx);
+            };
+            viewport.addEventListener('pointerup', endDrag);
+            viewport.addEventListener('pointercancel', endDrag);
+
+            // Wheel scroll on desktop
+            viewport.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                if (e.deltaY > 0) hoverCountry(Math.min(COUNTRIES.length - 1, hoveredCountryIndex + 1));
+                else if (e.deltaY < 0) hoverCountry(Math.max(0, hoveredCountryIndex - 1));
+            }, { passive: false });
+        }
+
+        function showCountryScreen() {
+            allScreens.forEach(s => s.style.display = 'none');
+            messageBox.style.display = 'none';
+            countryScreen.style.display = 'flex';
+            buildCountryWheel();
+            updateWheelPosition();
+            updateMenuButtons();
+        }
+
+        function startWithCountry() {
+            selectedCountry = COUNTRIES[hoveredCountryIndex];
+            applyCountryPalette(selectedCountry);
+            initializeGame();
+        }
 
         // ── Firebase config ─────────────────────────────────────────────────
         // Reemplazá estos valores con los de tu proyecto en Firebase Console
@@ -507,7 +850,7 @@
             const isMobile = window.innerWidth < 768;
             let maxH, maxW;
             if (isMobile) {
-                maxH = window.innerHeight - 185; // info bar + controls + gaps + padding
+                maxH = window.innerHeight - 215; // info bar + controls + gaps + padding + safe-area
                 maxW = window.innerWidth - 22;
             } else {
                 maxH = window.innerHeight - 80;
@@ -1079,7 +1422,10 @@
                     recordText = '<p style="font-size: 1.2em; color: var(--color-gold);">¡Nuevo Récord! 🥳</p>';
                 }
 
-                messageText.innerHTML = `¡SISTEMA COMPROMETIDO!<br>Las defensas han caído.<br>${recordText}<span class="text-success">Puntaje: ${score}</span><br><span class="text-success">${powerUpIconHTML} ¡${finalPowerUpCount} Ataques Prevenidos!: +${powerUpBonus} ✨</span><br><span class="text-success">Puntaje Final: ${finalScoreForRanking}</span>`;
+                const flagHTML = selectedCountry
+                    ? `<div style="margin-bottom:6px;"><span class="final-flag">${selectedCountry.flag}</span><span style="color:var(--color-gold); font-size:1.1em;">${selectedCountry.name}</span></div>`
+                    : '';
+                messageText.innerHTML = `¡SISTEMA COMPROMETIDO!<br>Las defensas han caído.<br>${flagHTML}${recordText}<span class="text-success">Puntaje: ${score}</span><br><span class="text-success">${powerUpIconHTML} ¡${finalPowerUpCount} Ataques Prevenidos!: +${powerUpBonus} ✨</span><br><span class="text-success">Puntaje Final: ${finalScoreForRanking}</span>`;
                 messageBox.className = ''; 
                 restartButton.style.display = 'inline-block';
                 saveScoreButton.style.display = 'inline-block';
@@ -1119,8 +1465,8 @@
             
             const deltaTime = time - lastTime;
             
-            // Pantalla de inicio - siempre manejar gamepad
-            if (isScreenVisible(startScreen)) {
+            // Pantallas de menú - siempre manejar gamepad
+            if (isScreenVisible(startScreen) || isScreenVisible(countryScreen)) {
                 handleGamepadInput(deltaTime || 16);
                 lastTime = time;
                 return;
@@ -1261,10 +1607,13 @@
                 const ts = firebase.firestore.FieldValue.serverTimestamp();
                 const docId = email; // doc ID = email (único por jugador)
 
+                const countryName = selectedCountry ? selectedCountry.name : '';
+                const countryFlag = selectedCountry ? selectedCountry.flag : '';
+
                 // Datos completos (privados): nombre, apellido, email, score
-                const fullDoc = { nombre, apellido, email, score: finalScoreForRanking, timestamp: ts };
+                const fullDoc = { nombre, apellido, email, score: finalScoreForRanking, country: countryName, flag: countryFlag, timestamp: ts };
                 // Datos públicos del ranking (sin email)
-                const rankDoc = { nombre, apellido, score: finalScoreForRanking, timestamp: ts };
+                const rankDoc = { nombre, apellido, score: finalScoreForRanking, country: countryName, flag: countryFlag, timestamp: ts };
 
                 // Las reglas de Firestore se encargan de aceptar solo si el score nuevo >= al existente
                 const writes = [
@@ -1302,7 +1651,8 @@
                 snapshot.forEach((doc) => {
                     const s = doc.data();
                     const li = document.createElement('li');
-                    li.innerHTML = `<span class="rank-name">${rankIndex + 1}. ${s.nombre} ${s.apellido}</span><span class="rank-score">${s.score}</span>`;
+                    const flagPart = s.flag ? `${s.flag} ` : '';
+                    li.innerHTML = `<span class="rank-name">${rankIndex + 1}. ${flagPart}${s.nombre} ${s.apellido}</span><span class="rank-score">${s.score}</span>`;
                     rankingList.appendChild(li);
                     rankIndex++;
                 });
@@ -1343,7 +1693,7 @@
         
         function updateMenuButtons() {
             // Limpiar TODAS las selecciones anteriores de TODOS los botones posibles
-            [startGameButton, restartButton, saveScoreButton, resumeButton, submitScoreButton, playAgainButton].forEach(btn => {
+            [startGameButton, confirmCountryButton, restartButton, saveScoreButton, resumeButton, submitScoreButton, playAgainButton].forEach(btn => {
                 if (btn) btn.classList.remove('gamepad-selected');
             });
             
@@ -1352,6 +1702,8 @@
             
             if (isScreenVisible(startScreen)) {
                 currentMenuButtons = [startGameButton];
+            } else if (isScreenVisible(countryScreen)) {
+                currentMenuButtons = [confirmCountryButton];
             } else if (isScreenVisible(messageBox)) {
                 if (restartButton.style.display !== 'none') currentMenuButtons.push(restartButton);
                 if (saveScoreButton.style.display !== 'none') currentMenuButtons.push(saveScoreButton);
@@ -1437,15 +1789,35 @@
             // D-Pad y ejes
             const dpadLeft = gp.buttons[14] && gp.buttons[14].pressed;
             const dpadRight = gp.buttons[15] && gp.buttons[15].pressed;
+            const dpadUp = gp.buttons[12] && gp.buttons[12].pressed;
             const dpadDown = gp.buttons[13] && gp.buttons[13].pressed;
             const axisX = gp.axes[0];
             const axisY = gp.axes[1];
             const DEADZONE = 0.5;
-            
+
             const leftPressed = dpadLeft || axisX < -DEADZONE;
             const rightPressed = dpadRight || axisX > DEADZONE;
+            const upPressed = dpadUp || axisY < -DEADZONE;
+            const downPressed = dpadDown || axisY > DEADZONE;
             const leftIsNewPress = leftPressed && !prevButtonStates[0][14];
             const rightIsNewPress = rightPressed && !prevButtonStates[0][15];
+            const upIsNewPress = upPressed && !prevButtonStates[0][12];
+            const downIsNewPress = downPressed && !prevButtonStates[0][13];
+
+            // NAVEGACIÓN EN PANTALLA DE PAÍS (rueda vertical)
+            if (isScreenVisible(countryScreen)) {
+                const total = COUNTRIES.length;
+                if (upIsNewPress || leftIsNewPress)   hoverCountry((hoveredCountryIndex - 1 + total) % total);
+                if (downIsNewPress || rightIsNewPress) hoverCountry((hoveredCountryIndex + 1) % total);
+                if (anyActionButton || startIsNewPress) startWithCountry();
+                prevButtonStates[0][0] = btn0Pressed; prevButtonStates[0][1] = btn1Pressed;
+                prevButtonStates[0][2] = btn2Pressed; prevButtonStates[0][3] = btn3Pressed;
+                prevButtonStates[0][4] = btn4Pressed; prevButtonStates[0][7] = btn7Pressed;
+                prevButtonStates[0][8] = btn8Pressed; prevButtonStates[0][9] = startButtonPressed;
+                prevButtonStates[0][12] = upPressed;  prevButtonStates[0][13] = downPressed;
+                prevButtonStates[0][14] = leftPressed; prevButtonStates[0][15] = rightPressed;
+                return;
+            }
 
             // NAVEGACIÓN EN MENÚS
             const inMenu = isScreenVisible(startScreen) || 
@@ -1561,7 +1933,8 @@
 
         // --- Keyboard and Button Listeners ---
         function initializeEventListeners() {
-            startGameButton.addEventListener('click', initializeGame);
+            startGameButton.addEventListener('click', showCountryScreen);
+            confirmCountryButton.addEventListener('click', startWithCountry);
             restartButton.addEventListener('click', returnToStartScreen);
             saveScoreButton.addEventListener('click', showSaveScoreScreen);
             submitScoreButton.addEventListener('click', saveScore);
@@ -1569,16 +1942,25 @@
 
             resumeButton.addEventListener('click', togglePause);
             
-            document.addEventListener('keydown', event => { 
+            document.addEventListener('keydown', event => {
                 if(isScreenVisible(saveScoreScreen) && event.key === 'Enter') {
                     saveScore();
                     return;
                 }
-                
+
+                // Navegación en pantalla de selección de país (rueda vertical)
+                if (isScreenVisible(countryScreen)) {
+                    const total = COUNTRIES.length;
+                    if (event.key === 'ArrowUp' || event.key === 'ArrowLeft')   { hoverCountry((hoveredCountryIndex - 1 + total) % total); event.preventDefault(); return; }
+                    if (event.key === 'ArrowDown' || event.key === 'ArrowRight'){ hoverCountry((hoveredCountryIndex + 1) % total); event.preventDefault(); return; }
+                    if (event.key === 'Enter' || event.key === ' ') { startWithCountry(); event.preventDefault(); return; }
+                    return;
+                }
+
                 // Navegación en menús con teclado
-                const inMenu = isScreenVisible(startScreen) || 
-                              isScreenVisible(messageBox) || 
-                              isScreenVisible(saveScoreScreen) || 
+                const inMenu = isScreenVisible(startScreen) ||
+                              isScreenVisible(messageBox) ||
+                              isScreenVisible(saveScoreScreen) ||
                               isScreenVisible(rankingScreen);
                 
                 if (inMenu) {
@@ -1662,6 +2044,7 @@
             calculateBlockSize();
             updateMenuButtons();
             initializeEventListeners();
+            setupWheelInteractions();
             requestAnimationFrame(gameLoop);
         }
         
