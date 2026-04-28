@@ -60,10 +60,12 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
+            height: 100vh;
+            height: 100dvh;
             margin: 0;
-            overflow-y: auto;
+            overflow: hidden;
             overscroll-behavior: none;
-            padding: 10px 10px calc(20px + env(safe-area-inset-bottom)) 10px;
+            padding: 6px 6px calc(6px + env(safe-area-inset-bottom)) 6px;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
@@ -383,7 +385,7 @@
             box-shadow: inset 0 0 14px rgba(0,0,0,0.6);
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
                     mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
-            touch-action: pan-y;
+            touch-action: none;
         }
         #wheel-track {
             position: absolute;
@@ -1723,9 +1725,16 @@
         
         function handleResponsiveLayout() {
             const controls = document.querySelector('.controls');
+            const infoPanel = document.querySelector('.info-panel');
             const gameArea = document.querySelector('.game-area');
-            if (controls.parentElement !== gameArea) {
-                gameArea.appendChild(controls);
+            if (window.innerWidth >= 768) {
+                if (controls.parentElement !== infoPanel) {
+                    infoPanel.appendChild(controls);
+                }
+            } else {
+                if (controls.parentElement !== gameArea) {
+                    gameArea.appendChild(controls);
+                }
             }
         }
 
