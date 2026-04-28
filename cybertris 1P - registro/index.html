@@ -65,7 +65,7 @@
             margin: 0;
             overflow: hidden;
             overscroll-behavior: none;
-            padding: 6px 6px calc(32px + env(safe-area-inset-bottom)) 6px;
+            padding: 6px 6px calc(60px + env(safe-area-inset-bottom)) 6px;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
@@ -248,27 +248,28 @@
             .game-area { flex: 1; align-self: stretch; }
             .controls {
                 display: grid;
-                grid-template-columns: repeat(3, 60px);
+                grid-template-columns: repeat(3, 44px);
                 grid-template-areas:
                     "left rotate right"
                     ". down .";
-                gap: 8px;
+                gap: 6px;
                 width: auto;
-                max-width: none;
+                max-width: 100%;
                 margin-top: auto;
                 padding-top: 16px;
                 justify-content: center;
             }
             .controls button {
-                width: 60px; height: 60px;
+                width: 44px; height: 44px;
                 flex: none;
-                font-size: 1.6em;
+                font-size: 1.3em;
+                height: 44px;
             }
             #leftButton   { grid-area: left; }
             #rotateButton {
                 grid-area: rotate;
                 position: static;
-                width: 60px; height: 60px;
+                width: 44px; height: 44px;
                 border-radius: 10px;
                 background: var(--color-primary);
                 -webkit-backdrop-filter: none;
