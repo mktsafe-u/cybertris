@@ -501,6 +501,130 @@
             margin-right: 8px;
             box-shadow: 0 0 0 1px rgba(255,255,255,0.2);
         }
+        .ranking-cta-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-top: 14px;
+            width: 100%;
+        }
+        .ranking-cta-stack .action-button {
+            margin-top: 0;
+            font-size: 1.2em;
+            padding: 12px 22px;
+        }
+        .rank-self-divider {
+            list-style: none;
+            text-align: center;
+            color: var(--color-tertiary-neon);
+            opacity: 0.6;
+            font-size: 1.2em;
+            letter-spacing: 4px;
+            margin: 4px 0 2px;
+        }
+        .rank-self {
+            background: rgba(255, 215, 0, 0.14);
+            border: 1px solid var(--color-gold);
+            border-radius: 6px;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.35);
+        }
+        .rank-self .rank-name, .rank-self .rank-score {
+            color: var(--color-gold);
+            text-shadow: 0 0 6px var(--color-gold);
+        }
+        .action-button.cta-gold {
+            background-color: rgba(255, 215, 0, 0.12);
+            color: var(--color-gold);
+            border-color: var(--color-gold);
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.45);
+        }
+        .action-button.cta-gold:hover {
+            background-color: rgba(255, 215, 0, 0.22);
+            box-shadow: 0 0 18px var(--color-gold);
+        }
+        .hs-modal {
+            position: fixed; inset: 0;
+            z-index: 3000;
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .hs-modal-backdrop {
+            position: absolute; inset: 0;
+            background: rgba(5, 6, 41, 0.85);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+        .hs-modal-content {
+            position: relative;
+            background: var(--color-secondary);
+            border: 2px solid var(--color-tertiary-neon);
+            border-radius: 12px;
+            box-shadow: 0 0 24px var(--color-tertiary-neon);
+            padding: 22px 22px 18px;
+            max-width: 480px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            color: var(--color-tertiary-neon);
+            font-family: 'VT323', monospace;
+        }
+        .hs-modal-close {
+            position: absolute; top: 6px; right: 10px;
+            background: transparent; border: none;
+            color: var(--color-tertiary-neon);
+            font-size: 1.8em; cursor: pointer;
+            font-family: 'VT323', monospace;
+            line-height: 1;
+        }
+        .hs-modal-title {
+            font-size: 1.5em;
+            color: var(--color-gold);
+            text-shadow: 0 0 6px var(--color-gold);
+            margin: 0 0 8px;
+            text-align: center;
+        }
+        .hs-modal-text {
+            font-size: 1em;
+            margin: 0 0 14px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        #hubspot-form-container,
+        #hubspot-form-container .hs-form,
+        #hubspot-form-container label,
+        #hubspot-form-container .hs-form-field > label,
+        #hubspot-form-container .hs-field-desc,
+        #hubspot-form-container .hs-richtext,
+        #hubspot-form-container .hs-richtext p,
+        #hubspot-form-container .hs-form-required,
+        #hubspot-form-container legend,
+        #hubspot-form-container .hs-form-booleancheckbox-display,
+        #hubspot-form-container .hs-form-booleancheckbox-display > span,
+        #hubspot-form-container .hs-form-checkbox-display,
+        #hubspot-form-container .hs-form-checkbox-display > span,
+        #hubspot-form-container .hs-form-radio-display,
+        #hubspot-form-container .hs-form-radio-display > span,
+        #hubspot-form-container .hs-main-font-element,
+        #hubspot-form-container .legal-consent-container,
+        #hubspot-form-container .legal-consent-container *,
+        #hubspot-form-container a {
+            color: #ffffff !important;
+        }
+        #hubspot-form-container .hs-error-msg,
+        #hubspot-form-container .hs-error-msgs,
+        #hubspot-form-container .hs-error-msgs label {
+            color: #ff6b6b !important;
+        }
+        #hubspot-form-container input,
+        #hubspot-form-container textarea,
+        #hubspot-form-container select {
+            font-family: 'VT323', monospace;
+            font-size: 1em;
+            color: #050629;
+            background: #ffffff;
+        }
         .mini-flag.xl {
             width: 50px; height: 50px;
             border-radius: 5px;
@@ -583,10 +707,6 @@
         <div class="save-score-form">
             <label class="save-score-label">Nombre:</label>
             <input type="text" id="playerNombreInput" class="score-input" maxlength="30" placeholder="Tu nombre" autocomplete="given-name" />
-            <label class="save-score-label">Apellido:</label>
-            <input type="text" id="playerApellidoInput" class="score-input" maxlength="30" placeholder="Tu apellido" autocomplete="family-name" />
-            <label class="save-score-label">Correo:</label>
-            <input type="email" id="playerEmailInput" class="score-input" maxlength="100" placeholder="tucorreo@empresa.com" autocomplete="email" />
         </div>
         <p id="save-error-text" class="error-text" style="display:none;"></p>
         <button id="submitScoreButton" class="action-button" style="margin-top:15px;">Guardar</button>
@@ -597,7 +717,23 @@
         <h1>Ranking</h1>
         <ol id="ranking-list"></ol>
         <p id="ranking-loading" class="loading-text" style="display:none;">Cargando...</p>
-        <button id="playAgainButton" class="action-button">Jugar de Nuevo</button>
+        <div class="ranking-cta-stack">
+            <button id="playAgainButton" class="action-button">Jugar de Nuevo</button>
+            <button id="customizeGameCTA" class="action-button cta-gold">¡Llevá CyberTris a tu organización!</button>
+        </div>
+    </div>
+
+    <div id="hubspot-modal" class="hs-modal" style="display:none;">
+        <div class="hs-modal-backdrop"></div>
+        <div class="hs-modal-content">
+            <button id="hubspotModalClose" class="hs-modal-close" aria-label="Cerrar">×</button>
+            <h2 class="hs-modal-title">🛡️ Concientizá de forma disruptiva</h2>
+            <p class="hs-modal-text">
+                En Safe-U te ayudamos a crear experiencias para concientizar sobre ciberseguridad
+                de forma dinámica y divertida. Dejanos tu info y armamos algo único para tu equipo.
+            </p>
+            <div id="hubspot-form-container"></div>
+        </div>
     </div>
 
 
@@ -642,8 +778,6 @@
         
         const submitScoreButton = document.getElementById('submitScoreButton');
         const playerNombreInput = document.getElementById('playerNombreInput');
-        const playerApellidoInput = document.getElementById('playerApellidoInput');
-        const playerEmailInput = document.getElementById('playerEmailInput');
         const finalScoreDisplay = document.getElementById('final-score-display');
         const saveErrorText = document.getElementById('save-error-text');
         const saveLoadingText = document.getElementById('save-loading-text');
@@ -678,6 +812,7 @@
         let ransomSolutionToggle = false; 
         let attackShuffleBag = []; 
         let finalScoreForRanking = 0;
+        let lastPlayerEntry = null;
         let firewall;
         let animation;
         let gameLoopDropCounter = 0;
@@ -1650,8 +1785,8 @@
             gameLoopDropCounter = 0;
         }
         
-      function returnToStartScreen() { 
-    window.location.href = './';
+        function returnToStartScreen() {
+            window.location.reload();
         }
         
         function showSaveScoreScreen() {
@@ -1659,8 +1794,6 @@
             messageBox.style.display = 'none';
             saveScoreScreen.style.display = 'flex';
             playerNombreInput.value = '';
-            playerApellidoInput.value = '';
-            playerEmailInput.value = '';
             saveErrorText.style.display = 'none';
             saveLoadingText.style.display = 'none';
             submitScoreButton.style.display = 'inline-block';
@@ -1671,17 +1804,9 @@
 
         async function saveScore() {
             const nombre = playerNombreInput.value.trim();
-            const apellido = playerApellidoInput.value.trim();
-            const email = playerEmailInput.value.trim().toLowerCase();
 
-            if (!nombre || !apellido || !email) {
-                saveErrorText.textContent = 'Completá todos los campos.';
-                saveErrorText.style.display = 'block';
-                return;
-            }
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                saveErrorText.textContent = 'El correo no es válido.';
+            if (!nombre) {
+                saveErrorText.textContent = 'Ingresá tu nombre.';
                 saveErrorText.style.display = 'block';
                 return;
             }
@@ -1697,26 +1822,31 @@
 
             try {
                 const ts = firebase.firestore.FieldValue.serverTimestamp();
-                const docId = email; // doc ID = email (único por jugador)
-
                 const countryName = selectedCountry ? selectedCountry.name : '';
                 const countryFlag = selectedCountry ? selectedCountry.flag : '';
 
-                // Datos completos (privados): nombre, apellido, email, score
-                const fullDoc = { nombre, apellido, email, score: finalScoreForRanking, country: countryName, flag: countryFlag, timestamp: ts };
-                // Datos públicos del ranking (sin email)
-                const rankDoc = { nombre, apellido, score: finalScoreForRanking, country: countryName, flag: countryFlag, timestamp: ts };
+                const fullDoc = { nombre, apellido: '', score: finalScoreForRanking, country: countryName, flag: countryFlag, timestamp: ts };
+                const rankDoc = { nombre, apellido: '', score: finalScoreForRanking, country: countryName, flag: countryFlag, timestamp: ts };
 
-                // Las reglas de Firestore se encargan de aceptar solo si el score nuevo >= al existente
+                let savedRankingId = null;
                 const writes = [
-                    db.collection(SCORES_COLLECTION).doc(docId).set(fullDoc).catch(e => {
-                        if (e.code !== 'permission-denied') throw e; // permission-denied = score menor, está OK
+                    db.collection(SCORES_COLLECTION).add(fullDoc).catch(e => {
+                        if (e.code !== 'permission-denied') throw e;
                     }),
-                    db.collection(RANKING_COLLECTION).doc(docId).set(rankDoc).catch(e => {
+                    db.collection(RANKING_COLLECTION).add(rankDoc).then(ref => {
+                        if (ref && ref.id) savedRankingId = ref.id;
+                    }).catch(e => {
                         if (e.code !== 'permission-denied') throw e;
                     })
                 ];
                 await Promise.all(writes);
+                lastPlayerEntry = {
+                    id: savedRankingId,
+                    nombre,
+                    country: countryName,
+                    flag: countryFlag,
+                    score: finalScoreForRanking
+                };
                 displayRanking();
             } catch(e) {
                 console.error(e);
@@ -1725,6 +1855,38 @@
                 saveErrorText.textContent = 'Error al guardar. Verificá tu conexión.';
                 saveErrorText.style.display = 'block';
             }
+        }
+
+        // === HubSpot CTA modal ===
+        let hubspotFormLoaded = false;
+        function openHubspotModal() {
+            const modal = document.getElementById('hubspot-modal');
+            modal.style.display = 'flex';
+            if (!hubspotFormLoaded) {
+                const ensureScript = () => new Promise((resolve) => {
+                    if (window.hbspt) return resolve();
+                    const s = document.createElement('script');
+                    s.src = 'https://js.hsforms.net/forms/embed/v2.js';
+                    s.charset = 'utf-8';
+                    s.async = true;
+                    s.onload = resolve;
+                    document.head.appendChild(s);
+                });
+                ensureScript().then(() => {
+                    if (window.hbspt && window.hbspt.forms) {
+                        window.hbspt.forms.create({
+                            portalId: "45210627",
+                            formId: "413fc54a-089f-4128-ba93-4c19750016a3",
+                            region: "na1",
+                            target: "#hubspot-form-container"
+                        });
+                        hubspotFormLoaded = true;
+                    }
+                });
+            }
+        }
+        function closeHubspotModal() {
+            document.getElementById('hubspot-modal').style.display = 'none';
         }
 
         async function displayRanking() {
@@ -1740,14 +1902,36 @@
                 rankingLoading.style.display = 'none';
                 rankingList.innerHTML = '';
                 let rankIndex = 0;
+                let playerInTop = false;
                 snapshot.forEach((doc) => {
                     const s = doc.data();
                     const li = document.createElement('li');
                     const flagPart = s.country ? makeMiniFlag(s.country, '') : '';
-                    li.innerHTML = `<span class="rank-name">${rankIndex + 1}. ${flagPart}${s.nombre} ${s.apellido}</span><span class="rank-score">${s.score}</span>`;
+                    const isSelf = lastPlayerEntry && !playerInTop && (
+                        doc.id === lastPlayerEntry.id ||
+                        (s.nombre === lastPlayerEntry.nombre &&
+                         Number(s.score) === Number(lastPlayerEntry.score) &&
+                         (s.country || '') === (lastPlayerEntry.country || ''))
+                    );
+                    if (isSelf) {
+                        li.classList.add('rank-self');
+                        playerInTop = true;
+                    }
+                    li.innerHTML = `<span class="rank-name">${rankIndex + 1}. ${flagPart}${s.nombre} ${s.apellido || ''}</span><span class="rank-score">${s.score}</span>`;
                     rankingList.appendChild(li);
                     rankIndex++;
                 });
+
+                if (lastPlayerEntry && !playerInTop) {
+                    const aboveSnap = await db.collection(RANKING_COLLECTION)
+                        .where('score', '>', lastPlayerEntry.score).get();
+                    const myRank = aboveSnap.size + 1;
+                    const li = document.createElement('li');
+                    li.className = 'rank-self';
+                    const flagPart = lastPlayerEntry.country ? makeMiniFlag(lastPlayerEntry.country, '') : '';
+                    li.innerHTML = `<span class="rank-name">${myRank}. ${flagPart}${lastPlayerEntry.nombre}</span><span class="rank-score">${lastPlayerEntry.score}</span>`;
+                    rankingList.appendChild(li);
+                }
             } catch(e) {
                 rankingLoading.textContent = 'Error al cargar el ranking.';
             }
@@ -2030,6 +2214,9 @@
             saveScoreButton.addEventListener('click', showSaveScoreScreen);
             submitScoreButton.addEventListener('click', saveScore);
             playAgainButton.addEventListener('click', returnToStartScreen);
+            document.getElementById('customizeGameCTA').addEventListener('click', openHubspotModal);
+            document.getElementById('hubspotModalClose').addEventListener('click', closeHubspotModal);
+            document.querySelector('#hubspot-modal .hs-modal-backdrop').addEventListener('click', closeHubspotModal);
 
             resumeButton.addEventListener('click', togglePause);
             
@@ -2060,11 +2247,11 @@
                         return;
                     }
                     // Navegar con flechas o Tab
-                    if (event.key === 'ArrowLeft' || (event.key === 'Tab' && event.shiftKey)) {
+                    if (event.key === 'ArrowLeft' || event.key === 'ArrowUp' || (event.key === 'Tab' && event.shiftKey)) {
                         event.preventDefault();
                         navigateMenu(-1);
                         return;
-                    } else if (event.key === 'ArrowRight' || event.key === 'Tab') {
+                    } else if (event.key === 'ArrowRight' || event.key === 'ArrowDown' || event.key === 'Tab') {
                         event.preventDefault();
                         navigateMenu(1);
                         return;
