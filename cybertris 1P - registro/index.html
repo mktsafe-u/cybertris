@@ -1901,25 +1901,51 @@
                     .orderBy('score', 'desc').limit(10).get();
                 rankingLoading.style.display = 'none';
                 rankingList.innerHTML = '';
-                let rankIndex = 0;
-                let playerInTop = false;
+
+                const topDocs = [];
                 snapshot.forEach((doc) => {
-                    const s = doc.data();
-                    const li = document.createElement('li');
-                    const flagPart = s.country ? makeMiniFlag(s.country, '') : '';
-                    const isSelf = lastPlayerEntry && !playerInTop && (
-                        doc.id === lastPlayerEntry.id ||
-                        (s.nombre === lastPlayerEntry.nombre &&
-                         Number(s.score) === Number(lastPlayerEntry.score) &&
-                         (s.country || '') === (lastPlayerEntry.country || ''))
-                    );
-                    if (isSelf) {
-                        li.classList.add('rank-self');
+                    topDocs.push({ id: doc.id, ...doc.data() });
+                });
+
+                const matchesSelf = (d) => lastPlayerEntry && (
+                    d.id === lastPlayerEntry.id ||
+                    (d.nombre === lastPlayerEntry.nombre &&
+                     Number(d.score) === Number(lastPlayerEntry.score) &&
+                     (d.country || '') === (lastPlayerEntry.country || ''))
+                );
+
+                let playerInTop = lastPlayerEntry ? topDocs.some(matchesSelf) : false;
+
+                // Si el jugador no está en el top pero su puntaje califica, lo insertamos local
+                if (lastPlayerEntry && !playerInTop) {
+                    const playerScore = Number(lastPlayerEntry.score);
+                    const insertIdx = topDocs.findIndex(d => Number(d.score) < playerScore);
+                    const shouldInsert = insertIdx !== -1 || topDocs.length < 10;
+                    if (shouldInsert) {
+                        const idx = insertIdx === -1 ? topDocs.length : insertIdx;
+                        topDocs.splice(idx, 0, {
+                            id: lastPlayerEntry.id || '__self__',
+                            nombre: lastPlayerEntry.nombre,
+                            apellido: '',
+                            score: lastPlayerEntry.score,
+                            country: lastPlayerEntry.country,
+                            flag: lastPlayerEntry.flag
+                        });
+                        if (topDocs.length > 10) topDocs.length = 10;
                         playerInTop = true;
                     }
-                    li.innerHTML = `<span class="rank-name">${rankIndex + 1}. ${flagPart}${s.nombre} ${s.apellido || ''}</span><span class="rank-score">${s.score}</span>`;
+                }
+
+                let selfMarked = false;
+                topDocs.forEach((s, idx) => {
+                    const li = document.createElement('li');
+                    const flagPart = s.country ? makeMiniFlag(s.country, '') : '';
+                    if (!selfMarked && matchesSelf(s)) {
+                        li.classList.add('rank-self');
+                        selfMarked = true;
+                    }
+                    li.innerHTML = `<span class="rank-name">${idx + 1}. ${flagPart}${s.nombre} ${s.apellido || ''}</span><span class="rank-score">${s.score}</span>`;
                     rankingList.appendChild(li);
-                    rankIndex++;
                 });
 
                 if (lastPlayerEntry && !playerInTop) {
@@ -2242,6 +2268,22 @@
                               isScreenVisible(rankingScreen);
                 
                 if (inMenu) {
+                    const ae = document.activeElement;
+                    const isTextInput = ae && (
+                        (ae.tagName === 'INPUT' && (!ae.type || /^(text|email|search|tel|url|password|number)$/i.test(ae.type))) ||
+                        ae.tagName === 'TEXTAREA' ||
+                        ae.isContentEditable
+                    );
+
+                    // Si el foco está en un input, solo Enter confirma; todo lo demás (espacio, flechas, letras) va al input
+                    if (isTextInput) {
+                        if (event.key === 'Enter') {
+                            event.preventDefault();
+                            confirmMenuSelection();
+                        }
+                        return;
+                    }
+
                     // En el formulario de guardar puntaje, Tab navega entre campos libremente
                     if (event.key === 'Tab' && isScreenVisible(saveScoreScreen)) {
                         return;
@@ -2256,7 +2298,7 @@
                         navigateMenu(1);
                         return;
                     }
-                    
+
                     // Confirmar con Enter o Espacio
                     if (event.key === 'Enter' || event.key === ' ') {
                         event.preventDefault();
