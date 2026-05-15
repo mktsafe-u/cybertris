@@ -813,6 +813,8 @@
         let attackShuffleBag = []; 
         let finalScoreForRanking = 0;
         let lastPlayerEntry = null;
+        let gameStartTime = 0;
+        let finalGameDurationMs = 0;
         let firewall;
         let animation;
         let gameLoopDropCounter = 0;
@@ -1638,6 +1640,9 @@
                 const finalPowerUpCount = preventedAttacksCount;
                 const powerUpBonus = finalPowerUpCount * 1000;
                 finalScoreForRanking = score + powerUpBonus;
+                if (gameStartTime > 0 && finalGameDurationMs === 0) {
+                    finalGameDurationMs = Math.round(performance.now() - gameStartTime);
+                }
                 const powerUpIconHTML = `<img src="${ANTIVIRUS_IMAGE_URL}" class="final-bonus-icon">`;
                 
                 let recordText = '';
@@ -1749,10 +1754,12 @@
         function initializeGame() {
             board = createBoard();
             score = 0;
-            linesCleared = 0; 
+            linesCleared = 0;
             level = 1;
-            gameOver = false; 
-            gamePaused = false; 
+            gameOver = false;
+            gamePaused = false;
+            gameStartTime = performance.now();
+            finalGameDurationMs = 0;
             pieceCounter = 0; 
             preventedAttacksCount = 0;
             spawnAntivirusNext = false; 
@@ -1825,8 +1832,9 @@
                 const countryName = selectedCountry ? selectedCountry.name : '';
                 const countryFlag = selectedCountry ? selectedCountry.flag : '';
 
-                const fullDoc = { nombre, apellido: '', score: finalScoreForRanking, country: countryName, flag: countryFlag, timestamp: ts };
-                const rankDoc = { nombre, apellido: '', score: finalScoreForRanking, country: countryName, flag: countryFlag, timestamp: ts };
+                const durationMs = finalGameDurationMs || 0;
+                const fullDoc = { nombre, apellido: '', score: finalScoreForRanking, durationMs, country: countryName, flag: countryFlag, timestamp: ts };
+                const rankDoc = { nombre, apellido: '', score: finalScoreForRanking, durationMs, country: countryName, flag: countryFlag, timestamp: ts };
 
                 let savedRankingId = null;
                 const writes = [
@@ -1845,7 +1853,8 @@
                     nombre,
                     country: countryName,
                     flag: countryFlag,
-                    score: finalScoreForRanking
+                    score: finalScoreForRanking,
+                    durationMs
                 };
                 displayRanking();
             } catch(e) {
@@ -1897,15 +1906,26 @@
             rankingLoading.style.display = 'block';
 
             try {
+                // Traemos un buffer mayor a 10 para poder desempatar localmente por duración
                 const snapshot = await db.collection(RANKING_COLLECTION)
-                    .orderBy('score', 'desc').limit(10).get();
+                    .orderBy('score', 'desc').limit(50).get();
                 rankingLoading.style.display = 'none';
                 rankingList.innerHTML = '';
 
-                const topDocs = [];
+                const allDocs = [];
                 snapshot.forEach((doc) => {
-                    topDocs.push({ id: doc.id, ...doc.data() });
+                    allDocs.push({ id: doc.id, ...doc.data() });
                 });
+
+                // Orden: score desc, luego durationMs desc (mayor tiempo = mejor posición en empate)
+                const sortFn = (a, b) => {
+                    const sa = Number(a.score) || 0;
+                    const sb = Number(b.score) || 0;
+                    if (sb !== sa) return sb - sa;
+                    return (Number(b.durationMs) || 0) - (Number(a.durationMs) || 0);
+                };
+                allDocs.sort(sortFn);
+                const topDocs = allDocs.slice(0, 10);
 
                 const matchesSelf = (d) => lastPlayerEntry && (
                     d.id === lastPlayerEntry.id ||
@@ -1916,21 +1936,22 @@
 
                 let playerInTop = lastPlayerEntry ? topDocs.some(matchesSelf) : false;
 
-                // Si el jugador no está en el top pero su puntaje califica, lo insertamos local
+                // Si el jugador no está en el top pero su puntaje (+duración) califica, lo insertamos local
                 if (lastPlayerEntry && !playerInTop) {
-                    const playerScore = Number(lastPlayerEntry.score);
-                    const insertIdx = topDocs.findIndex(d => Number(d.score) < playerScore);
+                    const selfDoc = {
+                        id: lastPlayerEntry.id || '__self__',
+                        nombre: lastPlayerEntry.nombre,
+                        apellido: '',
+                        score: lastPlayerEntry.score,
+                        durationMs: lastPlayerEntry.durationMs || 0,
+                        country: lastPlayerEntry.country,
+                        flag: lastPlayerEntry.flag
+                    };
+                    const insertIdx = topDocs.findIndex(d => sortFn(selfDoc, d) < 0);
                     const shouldInsert = insertIdx !== -1 || topDocs.length < 10;
                     if (shouldInsert) {
                         const idx = insertIdx === -1 ? topDocs.length : insertIdx;
-                        topDocs.splice(idx, 0, {
-                            id: lastPlayerEntry.id || '__self__',
-                            nombre: lastPlayerEntry.nombre,
-                            apellido: '',
-                            score: lastPlayerEntry.score,
-                            country: lastPlayerEntry.country,
-                            flag: lastPlayerEntry.flag
-                        });
+                        topDocs.splice(idx, 0, selfDoc);
                         if (topDocs.length > 10) topDocs.length = 10;
                         playerInTop = true;
                     }
@@ -1949,9 +1970,13 @@
                 });
 
                 if (lastPlayerEntry && !playerInTop) {
-                    const aboveSnap = await db.collection(RANKING_COLLECTION)
-                        .where('score', '>', lastPlayerEntry.score).get();
-                    const myRank = aboveSnap.size + 1;
+                    // Calcular rank real considerando empates por duración
+                    const selfDoc = {
+                        score: lastPlayerEntry.score,
+                        durationMs: lastPlayerEntry.durationMs || 0
+                    };
+                    const better = allDocs.filter(d => sortFn(d, selfDoc) < 0).length;
+                    const myRank = better + 1;
                     const li = document.createElement('li');
                     li.className = 'rank-self';
                     const flagPart = lastPlayerEntry.country ? makeMiniFlag(lastPlayerEntry.country, '') : '';
