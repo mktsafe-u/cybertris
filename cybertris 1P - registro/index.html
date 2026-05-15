@@ -1833,21 +1833,10 @@
                 const countryFlag = selectedCountry ? selectedCountry.flag : '';
 
                 const durationMs = finalGameDurationMs || 0;
-                const fullDoc = { nombre, apellido: '', score: finalScoreForRanking, durationMs, country: countryName, flag: countryFlag, timestamp: ts };
-                const rankDoc = { nombre, apellido: '', score: finalScoreForRanking, durationMs, country: countryName, flag: countryFlag, timestamp: ts };
+                const rankDoc = { nombre, score: finalScoreForRanking, durationMs, country: countryName, flag: countryFlag, timestamp: ts };
 
-                let savedRankingId = null;
-                const writes = [
-                    db.collection(SCORES_COLLECTION).add(fullDoc).catch(e => {
-                        if (e.code !== 'permission-denied') throw e;
-                    }),
-                    db.collection(RANKING_COLLECTION).add(rankDoc).then(ref => {
-                        if (ref && ref.id) savedRankingId = ref.id;
-                    }).catch(e => {
-                        if (e.code !== 'permission-denied') throw e;
-                    })
-                ];
-                await Promise.all(writes);
+                const rankingRef = await db.collection(RANKING_COLLECTION).add(rankDoc);
+                const savedRankingId = rankingRef && rankingRef.id ? rankingRef.id : null;
                 lastPlayerEntry = {
                     id: savedRankingId,
                     nombre,
@@ -1858,10 +1847,14 @@
                 };
                 displayRanking();
             } catch(e) {
-                console.error(e);
+                console.error('saveScore error:', e);
                 saveLoadingText.style.display = 'none';
                 submitScoreButton.style.display = 'inline-block';
-                saveErrorText.textContent = 'Error al guardar. Verificá tu conexión.';
+                if (e && e.code === 'permission-denied') {
+                    saveErrorText.textContent = 'Permiso denegado por Firestore. Revisá las reglas de seguridad.';
+                } else {
+                    saveErrorText.textContent = 'Error al guardar: ' + (e && e.message ? e.message : 'verificá tu conexión.');
+                }
                 saveErrorText.style.display = 'block';
             }
         }
