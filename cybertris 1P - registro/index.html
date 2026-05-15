@@ -109,6 +109,25 @@
         #start-screen { display: flex; }
 
         #start-screen h1, #ranking-screen h1 { font-size: 2.8em; color: var(--color-tertiary-neon); text-shadow: 0 0 8px var(--color-tertiary-neon); margin-bottom: 8px; }
+        .link-button {
+            background: transparent;
+            border: none;
+            color: var(--color-tertiary-neon);
+            font-family: 'VT323', monospace;
+            font-size: 1em;
+            margin-top: 8px;
+            cursor: pointer;
+            text-decoration: underline;
+            opacity: 0.85;
+            padding: 4px 10px;
+            transition: opacity 0.2s, text-shadow 0.2s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .link-button:hover, .link-button:focus, .link-button.gamepad-selected {
+            opacity: 1;
+            text-shadow: 0 0 6px var(--color-tertiary-neon);
+            outline: none;
+        }
         #start-screen .logo-container { margin-bottom: 10px; }
         #start-screen .logo-container img { max-height: 38px; border-radius: 8px; }
         .intro-heading { font-size: 1.4em; color: var(--color-primary); margin-bottom: 10px; }
@@ -649,6 +668,7 @@
             <p>Safe-U estará allí para ayudarte a combatirlos.</p>
         </div>
         <button id="startGameButton" class="action-button">⚽ Iniciar Juego</button>
+        <button id="viewRankingButton" class="link-button">Ver Ranking</button>
     </div>
 
     <div id="country-screen" class="screen">
@@ -730,7 +750,7 @@
             <h2 class="hs-modal-title">🛡️ Concientizá de forma disruptiva</h2>
             <p class="hs-modal-text">
                 En Safe-U te ayudamos a crear experiencias para concientizar sobre ciberseguridad
-                de forma dinámica y divertida. Dejanos tu info y armamos algo único para tu equipo.
+                de forma dinámica y divertida. ¡Armemos algo único para tu equipo!
             </p>
             <div id="hubspot-form-container"></div>
         </div>
@@ -758,6 +778,7 @@
         const confirmCountryButton = document.getElementById('confirmCountryButton');
 
         const startGameButton = document.getElementById('startGameButton');
+        const viewRankingButton = document.getElementById('viewRankingButton');
         const canvas = document.getElementById('cyberTrisCanvas');
         const context = canvas.getContext('2d');
         const scoreElement = document.getElementById('score');
@@ -2012,15 +2033,15 @@
         
         function updateMenuButtons() {
             // Limpiar TODAS las selecciones anteriores de TODOS los botones posibles
-            [startGameButton, confirmCountryButton, restartButton, saveScoreButton, resumeButton, submitScoreButton, playAgainButton].forEach(btn => {
+            [startGameButton, viewRankingButton, confirmCountryButton, restartButton, saveScoreButton, resumeButton, submitScoreButton, playAgainButton].forEach(btn => {
                 if (btn) btn.classList.remove('gamepad-selected');
             });
-            
+
             // Determinar qué botones están visibles
             currentMenuButtons = [];
-            
+
             if (isScreenVisible(startScreen)) {
-                currentMenuButtons = [startGameButton];
+                currentMenuButtons = [startGameButton, viewRankingButton];
             } else if (isScreenVisible(countryScreen)) {
                 currentMenuButtons = [confirmCountryButton];
             } else if (isScreenVisible(messageBox)) {
@@ -2253,6 +2274,7 @@
         // --- Keyboard and Button Listeners ---
         function initializeEventListeners() {
             startGameButton.addEventListener('click', showCountryScreen);
+            viewRankingButton.addEventListener('click', () => { lastPlayerEntry = null; displayRanking(); });
             confirmCountryButton.addEventListener('click', startWithCountry);
             restartButton.addEventListener('click', returnToStartScreen);
             saveScoreButton.addEventListener('click', showSaveScoreScreen);
