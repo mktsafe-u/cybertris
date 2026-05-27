@@ -654,13 +654,13 @@
 <body>
     <div id="start-screen" class="screen">
         <div class="logo-container">
-            <img id="safeULogoStart" src="logo-safe-u.png" alt="Safe-U Logo">
+            <img id="safeULogoStart" src="logo-ardua.png" alt="Safe-U Logo">
         </div>
         <h1>CyberTris</h1>
         <p class="wce-subtitle">⚽ WORLD CUP EDITION ⚽</p>
         <h2 class="intro-heading">¡Defendé tu arco digital!</h2>
         <div class="intro-section">
-            <svg class="intro-icon" fill="var(--color-primary)" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 0L1 4V11C1 13.45 2.89 15.67 5.39 16.56L10 18L14.61 16.56C17.11 15.67 19 13.45 19 11V4L10 0ZM10 2.17L17 5.11V11C17 12.5 16.06 13.89 14.66 14.44L10 15.82L5.34 14.44C3.94 13.89 3 12.5 3 11V5.11L10 2.17Z"/></svg>
+            <span style="font-size:1.6em; line-height:1;">🛡️</span>
             <p>Acomodá rápido las piezas y preparate para recibir ataques.</p>
         </div>
         <div class="intro-section">
@@ -694,7 +694,7 @@
                 <p>🛡️ <span id="powerUpCount">0</span></p>
             </div>
             <div class="logo-ingame">
-                <img id="safeULogoInGame" src="logo-safe-u.png" alt="Safe-U Logo">
+                <img id="safeULogoInGame" src="logo-ardua.png" alt="Safe-U Logo">
             </div>
         </div>
         <div class="game-area">
@@ -739,7 +739,7 @@
         <p id="ranking-loading" class="loading-text" style="display:none;">Cargando...</p>
         <div class="ranking-cta-stack">
             <button id="playAgainButton" class="action-button">Jugar de Nuevo</button>
-            <button id="customizeGameCTA" class="action-button cta-gold">¡Llevá CyberTris a tu organización!</button>
+            <button id="customizeGameCTA" class="action-button cta-gold" style="display:none;">¡Llevá CyberTris a tu organización!</button>
         </div>
     </div>
 
@@ -815,7 +815,7 @@
         };
 
         const ANTIVIRUS_IMAGE_URL = "icon-safe-u.png";
-        const SAFE_U_LOGO_URL = "logo-safe-u.png";
+        const SAFE_U_LOGO_URL = "logo-ardua.png";
 
         antivirusImageHTML.src = ANTIVIRUS_IMAGE_URL;
         safeULogoStart.src = SAFE_U_LOGO_URL;
