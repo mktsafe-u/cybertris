@@ -134,7 +134,7 @@
         .intro-section:last-of-type { margin-bottom: 8px; }
         .intro-section svg, .intro-section .intro-icon-img, .intro-section .intro-icon-emoji { width: 26px; height: 26px; flex-shrink: 0; object-fit: contain; display: flex; align-items: center; justify-content: center; font-size: 1.3em; line-height: 1; }
         .intro-section p { margin: 0; text-align: left; line-height: 1.3; font-family: 'VT323', monospace; font-size: 1em; }
-        .intro-heading { font-size: 1.4em; color: var(--color-primary); margin-bottom: 10px; align-self: flex-start; margin-left: 6%; }
+        .intro-heading { font-size: 1.4em; color: var(--color-primary); margin-bottom: 10px; text-align: center; }
         #startGameButton { margin-top: 28px; }
         .action-button { background-color: var(--color-primary); color: var(--color-tertiary-neon); border: 2px solid var(--color-tertiary-neon); padding: 12px 28px; font-size: 1.5em; cursor: pointer; border-radius: 8px; transition: background-color 0.2s, box-shadow 0.2s; font-family: 'VT323', monospace; box-shadow: 0 0 10px var(--color-tertiary-neon); margin-top: 14px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
         .action-button:hover { background-color: var(--color-tertiary-bright-blue); box-shadow: 0 0 15px var(--color-tertiary-neon), 0 0 20px var(--color-tertiary-neon); }
@@ -342,10 +342,11 @@
         @keyframes blink { 50% { opacity: 0.3; } }
         .error-text { color: var(--color-danger); font-size: 1.1em; margin-top: 8px; }
 
-        #ranking-list { list-style: none; padding: 0; margin-top: 20px; width: 100%; max-width: 400px; }
-        #ranking-list li { display: flex; justify-content: space-between; padding: 5px 10px; margin-bottom: 5px; background-color: rgba(9, 11, 82, 0.5); border-radius: 5px; font-size: 1.2em;}
-        #ranking-list li:nth-child(odd) { background-color: rgba(9, 11, 82, 0.8); }
-        #ranking-list .rank-name { text-align: left; }
+        #ranking-list, #ranking-empresas-list { list-style: none; padding: 0; margin-top: 8px; width: 100%; max-width: 400px; }
+        #ranking-list li, #ranking-empresas-list li { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; margin-bottom: 5px; background-color: rgba(9, 11, 82, 0.5); border-radius: 5px; font-size: 1.2em; }
+        #ranking-list li:nth-child(odd), #ranking-empresas-list li:nth-child(odd) { background-color: rgba(9, 11, 82, 0.8); }
+        #ranking-list .rank-name, #ranking-empresas-list .rank-name { text-align: left; }
+        .ranking-empresas-note { font-size: 0.75em; opacity: 0.55; margin: 2px 0 8px 0; text-align: center; font-family: 'VT323', monospace; color: var(--color-tertiary-neon); }
         #ranking-list .rank-score { text-align: right; font-weight: bold; }
 
         .text-success { color: var(--color-tertiary-neon); }
@@ -582,6 +583,11 @@
         .rank-players { font-size: 0.72em; opacity: 0.55; margin-left: 4px; }
         /* ── Campo empresa en formulario ──────────────── */
         .empresa-disclaimer { font-size: 0.65em; opacity: 0.65; margin: 2px 0 0 0; text-align: left; width: 80%; line-height: 1.35; font-family: 'VT323', monospace; color: var(--color-tertiary-neon); }
+        .save-score-actions { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 14px; width: 100%; }
+        .save-score-actions .action-button { margin-top: 0; width: 80%; }
+        .save-btn-secondary { background: transparent; font-size: 1em !important; box-shadow: 0 0 6px var(--color-tertiary-neon); opacity: 0.85; }
+        .save-btn-secondary:hover { opacity: 1; }
+        .save-cta-tertiary { font-size: 1em !important; padding: 8px 16px !important; white-space: nowrap; width: auto !important; color: #1a1a1a !important; }
         .hs-modal {
             position: fixed; inset: 0;
             z-index: 3000;
@@ -753,8 +759,12 @@
             <p class="empresa-disclaimer">⚠️ Para el ranking de empresas, todos los jugadores de la misma organización deben escribirlo exactamente igual.</p>
         </div>
         <p id="save-error-text" class="error-text" style="display:none;"></p>
-        <button id="submitScoreButton" class="action-button" style="margin-top:15px;">Guardar</button>
-        <p id="save-loading-text" class="loading-text" style="display:none;">Guardando...</p>
+        <div class="save-score-actions">
+            <button id="submitScoreButton" class="action-button">Guardar</button>
+            <p id="save-loading-text" class="loading-text" style="display:none;">Guardando...</p>
+            <button id="saveScreenBackButton" class="action-button save-btn-secondary">Volver al Inicio</button>
+            <button id="saveScreenCTAButton" class="action-button cta-gold save-cta-tertiary">¡Llevá CyberTris a tu organización!</button>
+        </div>
     </div>
 
     <div id="ranking-screen" class="screen">
@@ -765,6 +775,7 @@
             <button class="ranking-tab" id="tabEmpresas">🏢 Empresas</button>
         </div>
         <ol id="ranking-list"></ol>
+        <p id="ranking-empresas-note" class="ranking-empresas-note" style="display:none;">★ Suma de los mejores puntajes de hasta 5 jugadores únicos por empresa</p>
         <ol id="ranking-empresas-list" style="display:none;"></ol>
         <p id="ranking-loading" class="loading-text" style="display:none;">Cargando...</p>
         <div class="ranking-cta-stack">
@@ -1864,6 +1875,10 @@
                 saveErrorText.style.display = 'block';
                 return;
             }
+            if (finalScoreForRanking === 0) {
+                displayRanking();
+                return;
+            }
             if (!db) {
                 saveErrorText.textContent = 'Sin conexión a la base de datos.';
                 saveErrorText.style.display = 'block';
@@ -2020,7 +2035,7 @@
                 const top5 = Object.values(e.players).sort((a, b) => b.score - a.score).slice(0, 5);
                 const total = top5.reduce((s, p) => s + p.score, 0);
                 return { empresa: e.displayName, total, playerCount: Object.values(e.players).length };
-            }).filter(e => e.total > 0).sort((a, b) => b.total - a.total);
+            }).filter(e => e.playerCount > 0).sort((a, b) => b.total - a.total);
 
             // Detectar si la empresa del jugador actual es #1
             const newRecordMsg = document.getElementById('newRecordMsg');
@@ -2051,6 +2066,8 @@
             listEmpresas.style.display = tab === 'empresas' ? '' : 'none';
             btnPersonas.classList.toggle('active', tab === 'personas');
             btnEmpresas.classList.toggle('active', tab === 'empresas');
+            const empresasNote = document.getElementById('ranking-empresas-note');
+            if (empresasNote) empresasNote.style.display = tab === 'empresas' ? 'block' : 'none';
             if (newRecordMsg) newRecordMsg.style.display = 'none';
             if (tab === 'personas') renderPersonasRanking(cachedRankingDocs);
             if (tab === 'empresas') renderEmpresasRanking(cachedRankingDocs);
@@ -2366,6 +2383,8 @@
             playAgainButton.addEventListener('click', returnToStartScreen);
             document.getElementById('tabPersonas').addEventListener('click', () => switchRankingTab('personas'));
             document.getElementById('tabEmpresas').addEventListener('click', () => switchRankingTab('empresas'));
+            document.getElementById('saveScreenCTAButton').addEventListener('click', openHubspotModal);
+            document.getElementById('saveScreenBackButton').addEventListener('click', returnToStartScreen);
             document.getElementById('customizeGameCTA').addEventListener('click', openHubspotModal);
             document.getElementById('hubspotModalClose').addEventListener('click', closeHubspotModal);
             document.querySelector('#hubspot-modal .hs-modal-backdrop').addEventListener('click', closeHubspotModal);
