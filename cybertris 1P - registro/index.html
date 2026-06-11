@@ -347,6 +347,30 @@
         #ranking-list li:nth-child(odd), #ranking-empresas-list li:nth-child(odd) { background-color: rgba(9, 11, 82, 0.8); }
         #ranking-list .rank-name, #ranking-empresas-list .rank-name { text-align: left; }
         .ranking-empresas-note { font-size: 0.75em; opacity: 0.55; margin: 2px 0 8px 0; text-align: center; font-family: 'VT323', monospace; color: var(--color-tertiary-neon); }
+        /* ── Share modal ──────────────────────────────── */
+        #share-modal { position: fixed; inset: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
+        #share-modal .share-backdrop { position: absolute; inset: 0; background: rgba(5, 6, 41, 0.88); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+        .share-content {
+            position: relative; background: var(--color-secondary); border: 2px solid var(--color-tertiary-neon);
+            border-radius: 14px; box-shadow: 0 0 24px var(--color-tertiary-neon);
+            padding: 24px 22px 20px; max-width: 420px; width: 100%;
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
+            font-family: 'VT323', monospace; color: var(--color-tertiary-neon);
+        }
+        .share-close { position: absolute; top: 8px; right: 12px; background: transparent; border: none; color: var(--color-tertiary-neon); font-size: 1.8em; cursor: pointer; font-family: 'VT323', monospace; line-height: 1; }
+        .share-title { font-family: 'Orbitron', sans-serif; font-size: 1em; text-align: center; color: var(--color-tertiary-neon); margin: 0; }
+        .share-subtitle { font-size: 1em; opacity: 0.75; margin: 0; text-align: center; }
+        .share-url-row { display: flex; gap: 8px; width: 100%; align-items: center; }
+        .share-url-input { flex: 1; background: var(--color-tertiary-dark-blue); color: var(--color-tertiary-neon); border: 1px solid var(--color-primary); border-radius: 6px; padding: 8px 10px; font-family: 'VT323', monospace; font-size: 0.85em; min-width: 0; }
+        .share-copy-btn { background: var(--color-primary); color: #fff; border: none; border-radius: 6px; padding: 8px 14px; font-family: 'VT323', monospace; font-size: 1em; cursor: pointer; white-space: nowrap; transition: background 0.2s; }
+        .share-copy-btn:hover { background: var(--color-tertiary-bright-blue); }
+        .share-copy-confirm { font-size: 0.9em; color: var(--color-tertiary-neon); opacity: 0; transition: opacity 0.3s; margin: -6px 0; }
+        .share-copy-confirm.visible { opacity: 1; }
+        .whatsapp-btn { display: flex; align-items: center; gap: 8px; background: #25D366; color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-family: 'VT323', monospace; font-size: 1.2em; cursor: pointer; text-decoration: none; transition: background 0.2s; width: 100%; justify-content: center; box-sizing: border-box; }
+        .whatsapp-btn:hover { background: #1ebe5a; }
+        .whatsapp-btn svg { width: 22px; height: 22px; flex-shrink: 0; }
+        .share-divider { width: 100%; border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 0; }
+        .share-cta-btn { width: 100%; font-size: 1em !important; margin-top: 0 !important; }
         #ranking-list .rank-score { text-align: right; font-weight: bold; }
 
         .text-success { color: var(--color-tertiary-neon); }
@@ -585,9 +609,12 @@
         .empresa-disclaimer { font-size: 0.65em; opacity: 0.65; margin: 2px 0 0 0; text-align: left; width: 80%; line-height: 1.35; font-family: 'VT323', monospace; color: var(--color-tertiary-neon); }
         .save-score-actions { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 14px; width: 100%; }
         .save-score-actions .action-button { margin-top: 0; width: 80%; }
-        .save-btn-secondary { background: transparent; font-size: 1em !important; box-shadow: 0 0 6px var(--color-tertiary-neon); opacity: 0.85; }
-        .save-btn-secondary:hover { opacity: 1; }
-        .save-cta-tertiary { font-size: 1em !important; padding: 8px 16px !important; white-space: nowrap; width: auto !important; color: #1a1a1a !important; }
+        #submitScoreButton { font-size: 1.5em; }
+        #saveScreenBackButton { background: transparent; font-size: 0.95em; box-shadow: 0 0 6px var(--color-tertiary-neon); opacity: 0.85; }
+        #saveScreenBackButton:hover { opacity: 1; }
+        .share-challenge-btn { color: var(--color-gold) !important; font-size: 1.1em; opacity: 0.95; }
+        .share-challenge-btn:hover { opacity: 1; text-shadow: 0 0 8px var(--color-gold); }
+        #saveScreenShareButton, #rankingShareButton { background: transparent !important; border: none !important; box-shadow: none !important; padding: 4px 10px !important; width: auto !important; min-width: unset !important; }
         .hs-modal {
             position: fixed; inset: 0;
             z-index: 3000;
@@ -695,6 +722,7 @@
         </div>
         <button id="startGameButton" class="action-button">⚽ Iniciar Juego</button>
         <button id="viewRankingButton" class="link-button">Ver Ranking</button>
+        <button id="shareButton" class="link-button share-challenge-btn">⚔️ Desafiá a tus compañeros</button>
     </div>
 
     <div id="country-screen" class="screen">
@@ -763,7 +791,7 @@
             <button id="submitScoreButton" class="action-button">Guardar</button>
             <p id="save-loading-text" class="loading-text" style="display:none;">Guardando...</p>
             <button id="saveScreenBackButton" class="action-button save-btn-secondary">Volver al Inicio</button>
-            <button id="saveScreenCTAButton" class="action-button cta-gold save-cta-tertiary">¡Llevá CyberTris a tu organización!</button>
+            <button id="saveScreenShareButton" class="link-button share-challenge-btn" style="margin-top:4px;">⚔️ Desafiá a tus compañeros</button>
         </div>
     </div>
 
@@ -780,7 +808,8 @@
         <p id="ranking-loading" class="loading-text" style="display:none;">Cargando...</p>
         <div class="ranking-cta-stack">
             <button id="playAgainButton" class="action-button">Jugar de Nuevo</button>
-            <button id="customizeGameCTA" class="action-button cta-gold">¡Llevá CyberTris a tu organización!</button>
+            <button id="rankingShareButton" class="link-button share-challenge-btn">⚔️ Desafiá a tus compañeros</button>
+            <button id="customizeGameCTA" class="action-button cta-gold" style="display:none;">¡Llevá CyberTris a tu organización!</button>
         </div>
     </div>
 
@@ -797,6 +826,26 @@
         </div>
     </div>
 
+
+    <div id="share-modal" style="display:none;">
+        <div class="share-backdrop"></div>
+        <div class="share-content">
+            <button class="share-close" id="shareModalClose" aria-label="Cerrar">×</button>
+            <p class="share-title">🎮 Desafiá a tus compañeros</p>
+            <p class="share-subtitle">Compartí el link y que empiece el duelo</p>
+            <div class="share-url-row">
+                <input type="text" id="shareUrlInput" class="share-url-input" readonly />
+                <button class="share-copy-btn" id="copyUrlButton">📋 Copiar</button>
+            </div>
+            <p class="share-copy-confirm" id="shareCopyConfirm">✅ ¡Link copiado!</p>
+            <a id="whatsappShareBtn" href="#" target="_blank" rel="noopener" class="whatsapp-btn">
+                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                Compartir por WhatsApp
+            </a>
+            <hr class="share-divider" />
+            <button id="shareScreenCTAButton" class="action-button cta-gold share-cta-btn">¡Llevá CyberTris a tu organización!</button>
+        </div>
+    </div>
 
     <div id="attackWarning" class="dynamic-message"></div>
     <div id="secureMessage" class="dynamic-message"></div>
@@ -1954,6 +2003,21 @@
             document.getElementById('hubspot-modal').style.display = 'none';
         }
 
+        // === Share modal ===
+        function openShareModal() {
+            const modal = document.getElementById('share-modal');
+            const input = document.getElementById('shareUrlInput');
+            const url = 'https://cybertris.vercel.app/';
+            input.value = url;
+            const waText = encodeURIComponent('¡Te desafío a jugar CyberTris! ¿Podés superar mi puntaje? 🎮🛡️ ' + url);
+            document.getElementById('whatsappShareBtn').href = 'https://wa.me/?text=' + waText;
+            document.getElementById('shareCopyConfirm').classList.remove('visible');
+            modal.style.display = 'flex';
+        }
+        function closeShareModal() {
+            document.getElementById('share-modal').style.display = 'none';
+        }
+
         function renderPersonasRanking(allDocs) {
             const rankingList = document.getElementById('ranking-list');
             rankingList.innerHTML = '';
@@ -2134,7 +2198,8 @@
         
         function updateMenuButtons() {
             // Limpiar TODAS las selecciones anteriores de TODOS los botones posibles
-            [startGameButton, viewRankingButton, confirmCountryButton, restartButton, saveScoreButton, resumeButton, submitScoreButton, playAgainButton].forEach(btn => {
+            [startGameButton, viewRankingButton, confirmCountryButton, restartButton, saveScoreButton, resumeButton, submitScoreButton, playAgainButton,
+             document.getElementById('saveScreenBackButton')].forEach(btn => {
                 if (btn) btn.classList.remove('gamepad-selected');
             });
 
@@ -2150,7 +2215,8 @@
                 if (saveScoreButton.style.display !== 'none') currentMenuButtons.push(saveScoreButton);
                 if (resumeButton.style.display !== 'none') currentMenuButtons.push(resumeButton);
             } else if (isScreenVisible(saveScoreScreen)) {
-                currentMenuButtons = [submitScoreButton];
+                currentMenuButtons = [submitScoreButton,
+                    document.getElementById('saveScreenBackButton')];
             } else if (isScreenVisible(rankingScreen)) {
                 currentMenuButtons = [playAgainButton];
             }
@@ -2383,11 +2449,26 @@
             playAgainButton.addEventListener('click', returnToStartScreen);
             document.getElementById('tabPersonas').addEventListener('click', () => switchRankingTab('personas'));
             document.getElementById('tabEmpresas').addEventListener('click', () => switchRankingTab('empresas'));
-            document.getElementById('saveScreenCTAButton').addEventListener('click', openHubspotModal);
             document.getElementById('saveScreenBackButton').addEventListener('click', returnToStartScreen);
+            document.getElementById('saveScreenShareButton').addEventListener('click', openShareModal);
+            document.getElementById('rankingShareButton').addEventListener('click', openShareModal);
             document.getElementById('customizeGameCTA').addEventListener('click', openHubspotModal);
             document.getElementById('hubspotModalClose').addEventListener('click', closeHubspotModal);
             document.querySelector('#hubspot-modal .hs-modal-backdrop').addEventListener('click', closeHubspotModal);
+
+            // Share modal
+            document.getElementById('shareButton').addEventListener('click', openShareModal);
+            document.getElementById('shareModalClose').addEventListener('click', closeShareModal);
+            document.querySelector('#share-modal .share-backdrop').addEventListener('click', closeShareModal);
+            document.getElementById('shareScreenCTAButton').addEventListener('click', () => { closeShareModal(); openHubspotModal(); });
+            document.getElementById('copyUrlButton').addEventListener('click', () => {
+                const input = document.getElementById('shareUrlInput');
+                input.select(); input.setSelectionRange(0, 99999);
+                navigator.clipboard.writeText(input.value).catch(() => document.execCommand('copy'));
+                const confirm = document.getElementById('shareCopyConfirm');
+                confirm.classList.add('visible');
+                setTimeout(() => confirm.classList.remove('visible'), 2500);
+            });
 
             resumeButton.addEventListener('click', togglePause);
             
