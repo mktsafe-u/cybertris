@@ -342,11 +342,10 @@
         @keyframes blink { 50% { opacity: 0.3; } }
         .error-text { color: var(--color-danger); font-size: 1.1em; margin-top: 8px; }
 
-        #ranking-list, #ranking-empresas-list { list-style: none; padding: 0; margin-top: 8px; width: 100%; max-width: 400px; }
-        #ranking-list li, #ranking-empresas-list li { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; margin-bottom: 5px; background-color: rgba(9, 11, 82, 0.5); border-radius: 5px; font-size: 1.2em; }
-        #ranking-list li:nth-child(odd), #ranking-empresas-list li:nth-child(odd) { background-color: rgba(9, 11, 82, 0.8); }
-        #ranking-list .rank-name, #ranking-empresas-list .rank-name { text-align: left; }
-        .ranking-empresas-note { font-size: 0.75em; opacity: 0.55; margin: 2px 0 8px 0; text-align: center; font-family: 'VT323', monospace; color: var(--color-tertiary-neon); }
+        #ranking-list { list-style: none; padding: 0; margin-top: 8px; width: 100%; max-width: 400px; }
+        #ranking-list li { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; margin-bottom: 5px; background-color: rgba(9, 11, 82, 0.5); border-radius: 5px; font-size: 1.2em; }
+        #ranking-list li:nth-child(odd) { background-color: rgba(9, 11, 82, 0.8); }
+        #ranking-list .rank-name { text-align: left; }
         /* ── Share modal ──────────────────────────────── */
         #share-modal { position: fixed; inset: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
         #share-modal .share-backdrop { position: absolute; inset: 0; background: rgba(5, 6, 41, 0.88); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
@@ -590,23 +589,6 @@
             background: linear-gradient(135deg, #c8970c 0%, #ffe033 35%, #ffffff 52%, #ffe033 68%, #c8970c 100%);
             box-shadow: 0 0 28px rgba(255, 215, 0, 0.9), 0 0 50px rgba(255, 255, 255, 0.4), inset 0 1px 0 rgba(255,255,255,0.7);
         }
-        /* ── Ranking tabs ─────────────────────────────── */
-        .ranking-tabs { display: flex; gap: 8px; margin-bottom: 12px; justify-content: center; width: 100%; }
-        .ranking-tab {
-            background: transparent; border: 2px solid var(--color-primary);
-            color: var(--color-tertiary-neon); font-family: 'VT323', monospace;
-            font-size: 1.1em; padding: 5px 18px; border-radius: 20px;
-            cursor: pointer; transition: all 0.2s; opacity: 0.6; touch-action: manipulation;
-        }
-        .ranking-tab.active {
-            background: var(--color-primary); color: #fff;
-            opacity: 1; box-shadow: 0 0 10px var(--color-primary);
-        }
-        .ranking-tab:hover { opacity: 1; }
-        .rank-empresa { font-size: 0.72em; opacity: 0.65; margin-left: 4px; font-style: italic; }
-        .rank-players { font-size: 0.72em; opacity: 0.55; margin-left: 4px; }
-        /* ── Campo empresa en formulario ──────────────── */
-        .empresa-disclaimer { font-size: 0.65em; opacity: 0.65; margin: 2px 0 0 0; text-align: left; width: 80%; line-height: 1.35; font-family: 'VT323', monospace; color: var(--color-tertiary-neon); }
         .save-score-actions { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 14px; width: 100%; }
         .save-score-actions .action-button { margin-top: 0; width: 80%; }
         #submitScoreButton { font-size: 1.5em; }
@@ -722,7 +704,7 @@
         </div>
         <button id="startGameButton" class="action-button">⚽ Iniciar Juego</button>
         <button id="viewRankingButton" class="link-button">Ver Ranking</button>
-        <button id="shareButton" class="link-button share-challenge-btn">⚔️ Desafiá a tus compañeros</button>
+        <button id="shareButton" class="link-button share-challenge-btn" style="display:none;">⚔️ Desafiá a tus compañeros</button>
     </div>
 
     <div id="country-screen" class="screen">
@@ -782,33 +764,24 @@
         <div class="save-score-form">
             <label class="save-score-label">Nombre:</label>
             <input type="text" id="playerNombreInput" class="score-input" maxlength="30" placeholder="Tu nombre" autocomplete="given-name" />
-            <label class="save-score-label" style="margin-top:8px;">Empresa: <span style="opacity:0.55; font-size:0.8em;">(opcional)</span></label>
-            <input type="text" id="playerEmpresaInput" class="score-input" maxlength="50" placeholder="Tu empresa" autocomplete="organization" />
-            <p class="empresa-disclaimer">⚠️ Para el ranking de empresas, todos los jugadores de la misma organización deben escribirlo exactamente igual.</p>
         </div>
         <p id="save-error-text" class="error-text" style="display:none;"></p>
         <div class="save-score-actions">
             <button id="submitScoreButton" class="action-button">Guardar</button>
             <p id="save-loading-text" class="loading-text" style="display:none;">Guardando...</p>
             <button id="saveScreenBackButton" class="action-button save-btn-secondary">Volver al Inicio</button>
-            <button id="saveScreenShareButton" class="link-button share-challenge-btn" style="margin-top:4px;">⚔️ Desafiá a tus compañeros</button>
+            <button id="saveScreenShareButton" class="link-button share-challenge-btn" style="margin-top:4px; display:none;">⚔️ Desafiá a tus compañeros</button>
         </div>
     </div>
 
     <div id="ranking-screen" class="screen">
         <h1>Ranking</h1>
         <p id="newRecordMsg" style="display:none; font-size:1.2em; color:var(--color-gold); text-shadow:0 0 8px var(--color-gold); margin:0 0 8px 0;">🥳 ¡Nuevo Récord!</p>
-        <div class="ranking-tabs">
-            <button class="ranking-tab active" id="tabPersonas">👤 Personas</button>
-            <button class="ranking-tab" id="tabEmpresas">🏢 Empresas</button>
-        </div>
         <ol id="ranking-list"></ol>
-        <p id="ranking-empresas-note" class="ranking-empresas-note" style="display:none;">★ Suma de los mejores puntajes de hasta 5 jugadores únicos por empresa</p>
-        <ol id="ranking-empresas-list" style="display:none;"></ol>
         <p id="ranking-loading" class="loading-text" style="display:none;">Cargando...</p>
         <div class="ranking-cta-stack">
             <button id="playAgainButton" class="action-button">Jugar de Nuevo</button>
-            <button id="rankingShareButton" class="link-button share-challenge-btn">⚔️ Desafiá a tus compañeros</button>
+            <button id="rankingShareButton" class="link-button share-challenge-btn" style="display:none;">⚔️ Desafiá a tus compañeros</button>
             <button id="customizeGameCTA" class="action-button cta-gold" style="display:none;">¡Llevá CyberTris a tu organización!</button>
         </div>
     </div>
@@ -889,11 +862,9 @@
         
         const submitScoreButton = document.getElementById('submitScoreButton');
         const playerNombreInput = document.getElementById('playerNombreInput');
-        const playerEmpresaInput = document.getElementById('playerEmpresaInput');
         const finalScoreDisplay = document.getElementById('final-score-display');
         const saveErrorText = document.getElementById('save-error-text');
         const saveLoadingText = document.getElementById('save-loading-text');
-        let activeRankingTab = 'personas';
         let cachedRankingDocs = [];
         const rankingList = document.getElementById('ranking-list');
         const rankingLoading = document.getElementById('ranking-loading');
@@ -1906,7 +1877,6 @@
             messageBox.style.display = 'none';
             saveScoreScreen.style.display = 'flex';
             playerNombreInput.value = '';
-            playerEmpresaInput.value = '';
             saveErrorText.style.display = 'none';
             saveLoadingText.style.display = 'none';
             submitScoreButton.style.display = 'inline-block';
@@ -1917,7 +1887,6 @@
 
         async function saveScore() {
             const nombre = playerNombreInput.value.trim();
-            const empresa = playerEmpresaInput.value.trim();
 
             if (!nombre) {
                 saveErrorText.textContent = 'Ingresá tu nombre.';
@@ -1944,14 +1913,13 @@
                 const countryFlag = selectedCountry ? selectedCountry.flag : '';
 
                 const durationMs = finalGameDurationMs || 0;
-                const rankDoc = { nombre, empresa, score: finalScoreForRanking, durationMs, country: countryName, flag: countryFlag, timestamp: ts };
+                const rankDoc = { nombre, score: finalScoreForRanking, durationMs, country: countryName, flag: countryFlag, timestamp: ts };
 
                 const rankingRef = await db.collection(RANKING_COLLECTION).add(rankDoc);
                 const savedRankingId = rankingRef && rankingRef.id ? rankingRef.id : null;
                 lastPlayerEntry = {
                     id: savedRankingId,
                     nombre,
-                    empresa,
                     country: countryName,
                     flag: countryFlag,
                     score: finalScoreForRanking,
@@ -2036,7 +2004,7 @@
             );
             let playerInTop = lastPlayerEntry ? topDocs.some(matchesSelf) : false;
             if (lastPlayerEntry && !playerInTop) {
-                const selfDoc = { id: lastPlayerEntry.id || '__self__', nombre: lastPlayerEntry.nombre, empresa: lastPlayerEntry.empresa || '', score: lastPlayerEntry.score, durationMs: lastPlayerEntry.durationMs || 0, country: lastPlayerEntry.country, flag: lastPlayerEntry.flag };
+                const selfDoc = { id: lastPlayerEntry.id || '__self__', nombre: lastPlayerEntry.nombre, score: lastPlayerEntry.score, durationMs: lastPlayerEntry.durationMs || 0, country: lastPlayerEntry.country, flag: lastPlayerEntry.flag };
                 const insertIdx = topDocs.findIndex(d => sortFn(selfDoc, d) < 0);
                 const shouldInsert = insertIdx !== -1 || topDocs.length < 10;
                 if (shouldInsert) {
@@ -2054,9 +2022,8 @@
             topDocs.forEach((s, idx) => {
                 const li = document.createElement('li');
                 const flagPart = s.country ? makeMiniFlag(s.country, '') : '';
-                const empresaPart = s.empresa ? `<span class="rank-empresa">(${s.empresa})</span>` : '';
                 if (!selfMarked && matchesSelf(s)) { li.classList.add('rank-self'); selfMarked = true; }
-                li.innerHTML = `<span class="rank-name">${idx + 1}. ${flagPart}${s.nombre}${empresaPart}</span><span class="rank-score">${s.score}</span>`;
+                li.innerHTML = `<span class="rank-name">${idx + 1}. ${flagPart}${s.nombre}</span><span class="rank-score">${s.score}</span>`;
                 rankingList.appendChild(li);
             });
             if (lastPlayerEntry && !playerInTop) {
@@ -2066,88 +2033,17 @@
                 const li = document.createElement('li');
                 li.className = 'rank-self rank-self-divider-li';
                 const flagPart = lastPlayerEntry.country ? makeMiniFlag(lastPlayerEntry.country, '') : '';
-                const empresaPart = lastPlayerEntry.empresa ? `<span class="rank-empresa">(${lastPlayerEntry.empresa})</span>` : '';
-                li.innerHTML = `<span class="rank-name">${myRank}. ${flagPart}${lastPlayerEntry.nombre}${empresaPart}</span><span class="rank-score">${lastPlayerEntry.score}</span>`;
+                li.innerHTML = `<span class="rank-name">${myRank}. ${flagPart}${lastPlayerEntry.nombre}</span><span class="rank-score">${lastPlayerEntry.score}</span>`;
                 rankingList.appendChild(li);
             }
-        }
-
-        function renderEmpresasRanking(allDocs) {
-            const empresaList = document.getElementById('ranking-empresas-list');
-            empresaList.innerHTML = '';
-            const withEmpresa = allDocs.filter(d => d.empresa && d.empresa.trim());
-            if (!withEmpresa.length) {
-                const li = document.createElement('li');
-                li.style.cssText = 'text-align:center; opacity:0.6; list-style:none; padding:20px 0;';
-                li.textContent = 'Aún no hay empresas registradas.';
-                empresaList.appendChild(li);
-                return;
-            }
-            // Agrupar por empresa (normalizado), mejor score por jugador único
-            const empresaMap = {};
-            withEmpresa.forEach(d => {
-                const key = d.empresa.trim().toLowerCase();
-                if (!empresaMap[key]) empresaMap[key] = { displayName: d.empresa.trim(), players: {} };
-                const playerKey = d.nombre.trim().toLowerCase();
-                const sc = Number(d.score) || 0;
-                if (!empresaMap[key].players[playerKey] || sc > empresaMap[key].players[playerKey].score) {
-                    empresaMap[key].players[playerKey] = { nombre: d.nombre, score: sc };
-                }
-            });
-            // Top 5 jugadores únicos por empresa, sumar sus scores
-            const ranking = Object.values(empresaMap).map(e => {
-                const top5 = Object.values(e.players).sort((a, b) => b.score - a.score).slice(0, 5);
-                const total = top5.reduce((s, p) => s + p.score, 0);
-                return { empresa: e.displayName, total, playerCount: Object.values(e.players).length };
-            }).filter(e => e.playerCount > 0).sort((a, b) => b.total - a.total);
-
-            // Detectar si la empresa del jugador actual es #1
-            const newRecordMsg = document.getElementById('newRecordMsg');
-            if (newRecordMsg && lastPlayerEntry && lastPlayerEntry.empresa && ranking.length > 0) {
-                const myKey = lastPlayerEntry.empresa.trim().toLowerCase();
-                const topKey = ranking[0].empresa.trim().toLowerCase();
-                newRecordMsg.style.display = (myKey === topKey) ? 'block' : 'none';
-            }
-
-            ranking.slice(0, 10).forEach((e, idx) => {
-                const li = document.createElement('li');
-                const isMine = lastPlayerEntry && lastPlayerEntry.empresa &&
-                    e.empresa.trim().toLowerCase() === lastPlayerEntry.empresa.trim().toLowerCase();
-                if (isMine) li.classList.add('rank-self');
-                li.innerHTML = `<span class="rank-name">${idx + 1}. 🏢 ${e.empresa}<span class="rank-players">(${e.playerCount} jugador${e.playerCount !== 1 ? 'es' : ''})</span></span><span class="rank-score">${e.total}</span>`;
-                empresaList.appendChild(li);
-            });
-        }
-
-        function switchRankingTab(tab) {
-            activeRankingTab = tab;
-            const listPersonas = document.getElementById('ranking-list');
-            const listEmpresas = document.getElementById('ranking-empresas-list');
-            const btnPersonas = document.getElementById('tabPersonas');
-            const btnEmpresas = document.getElementById('tabEmpresas');
-            const newRecordMsg = document.getElementById('newRecordMsg');
-            listPersonas.style.display = tab === 'personas' ? '' : 'none';
-            listEmpresas.style.display = tab === 'empresas' ? '' : 'none';
-            btnPersonas.classList.toggle('active', tab === 'personas');
-            btnEmpresas.classList.toggle('active', tab === 'empresas');
-            const empresasNote = document.getElementById('ranking-empresas-note');
-            if (empresasNote) empresasNote.style.display = tab === 'empresas' ? 'block' : 'none';
-            if (newRecordMsg) newRecordMsg.style.display = 'none';
-            if (tab === 'personas') renderPersonasRanking(cachedRankingDocs);
-            if (tab === 'empresas') renderEmpresasRanking(cachedRankingDocs);
         }
 
         async function displayRanking() {
             messageBox.style.display = 'none';
             saveScoreScreen.style.display = 'none';
             showScreen('ranking-screen');
-            activeRankingTab = 'personas';
             document.getElementById('ranking-list').innerHTML = '';
-            document.getElementById('ranking-empresas-list').innerHTML = '';
             document.getElementById('ranking-list').style.display = '';
-            document.getElementById('ranking-empresas-list').style.display = 'none';
-            document.getElementById('tabPersonas').classList.add('active');
-            document.getElementById('tabEmpresas').classList.remove('active');
             rankingLoading.style.display = 'block';
             const newRecordMsg = document.getElementById('newRecordMsg');
             if (newRecordMsg) newRecordMsg.style.display = 'none';
@@ -2159,7 +2055,6 @@
                 cachedRankingDocs = [];
                 snapshot.forEach((doc) => { cachedRankingDocs.push({ id: doc.id, ...doc.data() }); });
                 renderPersonasRanking(cachedRankingDocs);
-                renderEmpresasRanking(cachedRankingDocs);
             } catch(e) {
                 rankingLoading.style.display = 'none';
                 rankingLoading.textContent = 'Error al cargar el ranking.';
@@ -2447,8 +2342,6 @@
             saveScoreButton.addEventListener('click', showSaveScoreScreen);
             submitScoreButton.addEventListener('click', saveScore);
             playAgainButton.addEventListener('click', returnToStartScreen);
-            document.getElementById('tabPersonas').addEventListener('click', () => switchRankingTab('personas'));
-            document.getElementById('tabEmpresas').addEventListener('click', () => switchRankingTab('empresas'));
             document.getElementById('saveScreenBackButton').addEventListener('click', returnToStartScreen);
             document.getElementById('saveScreenShareButton').addEventListener('click', openShareModal);
             document.getElementById('rankingShareButton').addEventListener('click', openShareModal);
