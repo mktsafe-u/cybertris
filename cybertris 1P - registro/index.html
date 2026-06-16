@@ -26,29 +26,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Permissions-Policy" content="gamepad=*">
     <title>CyberTris: World Cup Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=VT323&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=VT323&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
-            --color-primary: #6c4fd8;
-            --color-secondary: #1a1145;
-            --color-tertiary-dark-blue: #150d38;
-            --color-tertiary-bright-blue: #7b5fff;
-            --color-tertiary-neon: #a78bff;
-            --color-danger: #FF3B6B;
+            --color-primary: #0054F2;
+            --color-secondary: #293033;
+            --color-tertiary-dark-blue: #090B52;
+            --color-tertiary-bright-blue: #1201FF;
+            --color-tertiary-neon: #03FF9E;
+            --color-danger: #FF0000;
             --color-gold: #FFD700;
             --color-gold-shine: #FFFACD;
-            --color-success: #9d7bff;
-            --color-piece-s-green: #4a2f9e;
+            --color-success: #00FF00;
+            --color-piece-s-green: #01A76E; /* Nuevo color para la pieza S */
             --color-text-on-danger: #FFFFFF;
-            --color-firewall: #8b6fff;
+            --color-firewall: #00FF7F; /* Color para el nuevo efecto Firewall */
             --wc-gold: #FFD700;
             --wc-gold-dim: rgba(255, 215, 0, 0.12);
-            --wc-overlay: rgba(20, 12, 48, 0.82);
+            --wc-overlay: rgba(5, 6, 41, 0.82);
         }
         body {
             font-family: 'VT323', monospace;
-            background-color: #14092e;
+            background-color: #050629;
             background-image: url('fondo_cancha.png');
             background-size: cover;
             background-position: center;
@@ -129,12 +129,12 @@
             outline: none;
         }
         #start-screen .logo-container { margin-bottom: 10px; }
-        #start-screen .logo-container img { max-height: 76px; border-radius: 8px; }
-        .intro-section { display: flex; align-items: center; justify-content: flex-start; gap: 12px; margin-bottom: 18px; font-size: 1.35em; width: 88%; align-self: flex-start; margin-left: 6%; }
+        #start-screen .logo-container img { max-height: 38px; border-radius: 8px; }
+        .intro-heading { font-size: 1.4em; color: var(--color-primary); margin-bottom: 10px; }
+        .intro-section { display: flex; align-items: center; justify-content: flex-start; gap: 12px; margin-bottom: 22px; font-size: 1.1em; width: 88%; }
         .intro-section:last-of-type { margin-bottom: 8px; }
-        .intro-section svg, .intro-section .intro-icon-img, .intro-section .intro-icon-emoji { width: 26px; height: 26px; flex-shrink: 0; object-fit: contain; display: flex; align-items: center; justify-content: center; font-size: 1.3em; line-height: 1; }
-        .intro-section p { margin: 0; text-align: left; line-height: 1.3; font-family: 'VT323', monospace; font-size: 1em; }
-        .intro-heading { font-size: 1.4em; color: var(--color-primary); margin-bottom: 10px; text-align: center; }
+        .intro-section svg, .intro-section .intro-icon-img { width: 26px; height: 26px; flex-shrink: 0; object-fit: contain; }
+        .intro-section p { margin: 0; text-align: left; line-height: 1.4; }
         #startGameButton { margin-top: 28px; }
         .action-button { background-color: var(--color-primary); color: var(--color-tertiary-neon); border: 2px solid var(--color-tertiary-neon); padding: 12px 28px; font-size: 1.5em; cursor: pointer; border-radius: 8px; transition: background-color 0.2s, box-shadow 0.2s; font-family: 'VT323', monospace; box-shadow: 0 0 10px var(--color-tertiary-neon); margin-top: 14px; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
         .action-button:hover { background-color: var(--color-tertiary-bright-blue); box-shadow: 0 0 15px var(--color-tertiary-neon), 0 0 20px var(--color-tertiary-neon); }
@@ -148,7 +148,7 @@
             padding: 8px;
             border: 3px solid var(--color-tertiary-neon);
             border-radius: 15px;
-            background-color: rgba(26, 17, 69, 0.7);
+            background-color: rgba(41, 48, 51, 0.7);
             box-shadow: 0 0 20px var(--color-tertiary-neon), inset 0 0 10px var(--color-tertiary-neon);
             width: 100%;
             max-width: 95vw;
@@ -171,7 +171,7 @@
             flex-wrap: wrap;
             gap: 4px;
             padding: 5px 10px;
-            background-color: rgba(21, 13, 56, 0.85);
+            background-color: rgba(9, 11, 82, 0.85);
             border-radius: 8px;
             border: 1px solid var(--color-tertiary-neon);
             width: 100%;
@@ -181,7 +181,6 @@
         .info-panel p { font-size: 1.1em; margin: 0; white-space: nowrap; }
         .info-panel .logo-ingame { display: none; }
         .info-panel .content-top { display: flex; flex-direction: row; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center; }
-        .mobile-game-title { display: block; width: 100%; text-align: center; font-family: 'VT323', monospace; font-size: 1.5em; color: var(--color-tertiary-neon); text-shadow: 0 0 5px var(--color-tertiary-neon); margin: 0 0 2px 0; letter-spacing: 3px; order: -1; }
 
         /* Controls: mobile grid — 3 buttons in a row, rotate floats above right button */
         .controls {
@@ -214,7 +213,7 @@
             right: 0;
             width: 60px; height: 60px;
             border-radius: 50%;
-            background: rgba(21, 13, 56, 0.22);
+            background: rgba(9, 11, 82, 0.22);
             -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             border: 2px solid var(--color-tertiary-neon);
@@ -227,7 +226,7 @@
             box-shadow: 0 0 12px var(--color-tertiary-neon);
         }
         #rotateButton:active, #rotateButton.pressed {
-            background: rgba(108, 79, 216, 0.45);
+            background: rgba(0, 84, 242, 0.45);
             transform: scale(0.92);
         }
         .rotate-icon { width: 55%; height: 55%; }
@@ -264,8 +263,7 @@
             .info-panel p { font-size: 1.4em; margin: 5px 0; }
             .info-panel .content-top { flex-direction: column; gap: 0; margin-bottom: auto; }
             .info-panel .logo-ingame { display: block; margin-top: auto; padding-top: 15px; }
-            .mobile-game-title { display: none; }
-            .info-panel .logo-ingame img { max-height: 44px; border-radius: 4px; opacity: 0.7; }
+            .info-panel .logo-ingame img { max-height: 22px; border-radius: 4px; opacity: 0.7; }
             .game-area { flex: 1; align-self: stretch; }
             .controls {
                 display: grid;
@@ -303,7 +301,7 @@
 
         #message-box, #save-score-screen {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background-color: rgba(21, 13, 56, 0.95); padding: 24px 22px; border-radius: 10px;
+            background-color: rgba(9, 11, 82, 0.95); padding: 24px 22px; border-radius: 10px;
             text-align: center; z-index: 1000; font-size: 1.4em; line-height: 1.4;
             border: 2px solid var(--color-danger); box-shadow: 0 0 20px var(--color-danger);
             color: var(--color-danger);
@@ -342,34 +340,10 @@
         @keyframes blink { 50% { opacity: 0.3; } }
         .error-text { color: var(--color-danger); font-size: 1.1em; margin-top: 8px; }
 
-        #ranking-list { list-style: none; padding: 0; margin-top: 8px; width: 100%; max-width: 400px; }
-        #ranking-list li { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; margin-bottom: 5px; background-color: rgba(21, 13, 56, 0.5); border-radius: 5px; font-size: 1.2em; }
-        #ranking-list li:nth-child(odd) { background-color: rgba(21, 13, 56, 0.8); }
+        #ranking-list { list-style: none; padding: 0; margin-top: 20px; width: 100%; max-width: 400px; }
+        #ranking-list li { display: flex; justify-content: space-between; padding: 5px 10px; margin-bottom: 5px; background-color: rgba(9, 11, 82, 0.5); border-radius: 5px; font-size: 1.2em;}
+        #ranking-list li:nth-child(odd) { background-color: rgba(9, 11, 82, 0.8); }
         #ranking-list .rank-name { text-align: left; }
-        /* ── Share modal ──────────────────────────────── */
-        #share-modal { position: fixed; inset: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
-        #share-modal .share-backdrop { position: absolute; inset: 0; background: rgba(20, 12, 48, 0.88); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
-        .share-content {
-            position: relative; background: var(--color-secondary); border: 2px solid var(--color-tertiary-neon);
-            border-radius: 14px; box-shadow: 0 0 24px var(--color-tertiary-neon);
-            padding: 24px 22px 20px; max-width: 420px; width: 100%;
-            display: flex; flex-direction: column; align-items: center; gap: 12px;
-            font-family: 'VT323', monospace; color: var(--color-tertiary-neon);
-        }
-        .share-close { position: absolute; top: 8px; right: 12px; background: transparent; border: none; color: var(--color-tertiary-neon); font-size: 1.8em; cursor: pointer; font-family: 'VT323', monospace; line-height: 1; }
-        .share-title { font-family: 'Orbitron', sans-serif; font-size: 1em; text-align: center; color: var(--color-tertiary-neon); margin: 0; }
-        .share-subtitle { font-size: 1em; opacity: 0.75; margin: 0; text-align: center; }
-        .share-url-row { display: flex; gap: 8px; width: 100%; align-items: center; }
-        .share-url-input { flex: 1; background: var(--color-tertiary-dark-blue); color: var(--color-tertiary-neon); border: 1px solid var(--color-primary); border-radius: 6px; padding: 8px 10px; font-family: 'VT323', monospace; font-size: 0.85em; min-width: 0; }
-        .share-copy-btn { background: var(--color-primary); color: #fff; border: none; border-radius: 6px; padding: 8px 14px; font-family: 'VT323', monospace; font-size: 1em; cursor: pointer; white-space: nowrap; transition: background 0.2s; }
-        .share-copy-btn:hover { background: var(--color-tertiary-bright-blue); }
-        .share-copy-confirm { font-size: 0.9em; color: var(--color-tertiary-neon); opacity: 0; transition: opacity 0.3s; margin: -6px 0; }
-        .share-copy-confirm.visible { opacity: 1; }
-        .whatsapp-btn { display: flex; align-items: center; gap: 8px; background: #25D366; color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-family: 'VT323', monospace; font-size: 1.2em; cursor: pointer; text-decoration: none; transition: background 0.2s; width: 100%; justify-content: center; box-sizing: border-box; }
-        .whatsapp-btn:hover { background: #1ebe5a; }
-        .whatsapp-btn svg { width: 22px; height: 22px; flex-shrink: 0; }
-        .share-divider { width: 100%; border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 0; }
-        .share-cta-btn { width: 100%; font-size: 1em !important; margin-top: 0 !important; }
         #ranking-list .rank-score { text-align: right; font-weight: bold; }
 
         .text-success { color: var(--color-tertiary-neon); }
@@ -378,7 +352,7 @@
         .dynamic-message {
             position: fixed; display: none; font-size: 1.8em;
             text-shadow: 1px 1px 0px var(--color-secondary), -1px -1px 0px var(--color-secondary), 1px -1px 0px var(--color-secondary), -1px 1px 0px var(--color-secondary);
-            z-index: 2000; padding: 8px 15px; background-color: rgba(26, 17, 69, 0.6);
+            z-index: 2000; padding: 8px 15px; background-color: rgba(41, 48, 51, 0.6);
             border-radius: 8px; pointer-events: none;
         }
         #attackWarning {
@@ -391,13 +365,13 @@
         }
 
 
-        .piece-I { background-color: var(--piece-I-color, #6c4fd8); }
-        .piece-L { background-color: var(--piece-L-color, #7b5fff); }
-        .piece-J { background-color: var(--piece-J-color, #a78bff); }
-        .piece-T { background-color: var(--piece-T-color, #5b3fc4); }
-        .piece-O { background-color: var(--piece-O-color, #8b6fff); }
-        .piece-S { background-color: var(--piece-S-color, #4a2f9e); }
-        .piece-Z { background-color: var(--piece-Z-color, #9d7bff); }
+        .piece-I { background-color: var(--piece-I-color, #0054F2); }
+        .piece-L { background-color: var(--piece-L-color, #1201FF); }
+        .piece-J { background-color: var(--piece-J-color, #03FF9E); }
+        .piece-T { background-color: var(--piece-T-color, #0054F2); }
+        .piece-O { background-color: var(--piece-O-color, #1201FF); }
+        .piece-S { background-color: var(--piece-S-color, #01A76E); }
+        .piece-Z { background-color: var(--piece-Z-color, #03FF9E); }
         .piece-CYBER { background-color: var(--color-danger); }
         .piece-RANSOM { background-color: var(--color-danger); }
         .piece-ANTIVIRUS { background-color: var(--color-gold); }
@@ -434,7 +408,7 @@
             margin-bottom: 14px;
         }
         .wheel-arrow {
-            background: rgba(108, 79, 216, 0.4);
+            background: rgba(0, 84, 242, 0.4);
             color: var(--color-gold);
             border: 2px solid var(--color-gold);
             border-radius: 50%;
@@ -457,7 +431,7 @@
             overflow: hidden;
             border: 2px solid var(--color-primary);
             border-radius: 12px;
-            background: rgba(21, 13, 56, 0.55);
+            background: rgba(9, 11, 82, 0.55);
             box-shadow: inset 0 0 14px rgba(0,0,0,0.6);
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
                     mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
@@ -492,7 +466,7 @@
         .wheel-item .wn {
             font-size: 1.4em;
             color: #FFFFFF;
-            text-shadow: 0 0 6px #a78bff;
+            text-shadow: 0 0 6px #03FF9E;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -511,7 +485,7 @@
         }
         .wheel-item.active {
             border-color: var(--color-gold);
-            background: rgba(108, 79, 216, 0.22);
+            background: rgba(0, 84, 242, 0.22);
             box-shadow: 0 0 16px rgba(255,215,0,0.5), 0 0 28px rgba(255,215,0,0.3);
             transform: scale(1.04);
         }
@@ -525,7 +499,7 @@
 
         @media (min-width: 768px) {
             #country-screen { max-width: 560px; }
-            #country-screen h1 { font-size: 1.5em; }
+            #country-screen h1 { font-size: 2.2em; }
             #wheel-viewport { height: 320px; }
             .wheel-arrow { width: 44px; height: 44px; font-size: 1.4em; }
         }
@@ -589,14 +563,6 @@
             background: linear-gradient(135deg, #c8970c 0%, #ffe033 35%, #ffffff 52%, #ffe033 68%, #c8970c 100%);
             box-shadow: 0 0 28px rgba(255, 215, 0, 0.9), 0 0 50px rgba(255, 255, 255, 0.4), inset 0 1px 0 rgba(255,255,255,0.7);
         }
-        .save-score-actions { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 14px; width: 100%; }
-        .save-score-actions .action-button { margin-top: 0; width: 80%; }
-        #submitScoreButton { font-size: 1.5em; }
-        #saveScreenBackButton { background: transparent; font-size: 0.95em; box-shadow: 0 0 6px var(--color-tertiary-neon); opacity: 0.85; }
-        #saveScreenBackButton:hover { opacity: 1; }
-        .share-challenge-btn { color: var(--color-gold) !important; font-size: 1.1em; opacity: 0.95; }
-        .share-challenge-btn:hover { opacity: 1; text-shadow: 0 0 8px var(--color-gold); }
-        #saveScreenShareButton, #rankingShareButton { background: transparent !important; border: none !important; box-shadow: none !important; padding: 4px 10px !important; width: auto !important; min-width: unset !important; }
         .hs-modal {
             position: fixed; inset: 0;
             z-index: 3000;
@@ -606,7 +572,7 @@
         }
         .hs-modal-backdrop {
             position: absolute; inset: 0;
-            background: rgba(20, 12, 48, 0.85);
+            background: rgba(5, 6, 41, 0.85);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
         }
@@ -676,7 +642,7 @@
         #hubspot-form-container select {
             font-family: 'VT323', monospace;
             font-size: 1em;
-            color: #14092e;
+            color: #050629;
             background: #ffffff;
         }
         .mini-flag.xl {
@@ -693,9 +659,9 @@
         </div>
         <h1>CyberTris</h1>
         <p class="wce-subtitle">⚽ WORLD CUP EDITION ⚽</p>
-        <h2 class="intro-heading">¡Bloqueá los ataques y dominá el tablero!</h2>
+        <h2 class="intro-heading">¡Defendé tu arco digital!</h2>
         <div class="intro-section">
-            <span class="intro-icon-emoji">🛡️</span>
+            <span style="font-size:1.6em; line-height:1;">🛡️</span>
             <p>Acomodá rápido las piezas y preparate para recibir ataques.</p>
         </div>
         <div class="intro-section">
@@ -704,7 +670,6 @@
         </div>
         <button id="startGameButton" class="action-button">⚽ Iniciar Juego</button>
         <button id="viewRankingButton" class="link-button">Ver Ranking</button>
-        <button id="shareButton" class="link-button share-challenge-btn" style="display:none;">⚔️ Desafiá a tus compañeros</button>
     </div>
 
     <div id="country-screen" class="screen">
@@ -722,9 +687,8 @@
 
     <div class="game-container" id="gameContainer">
         <div class="info-panel">
-            <p class="mobile-game-title">CyberTris</p>
             <div class="content-top">
-                <h2>CyberTris</h2>
+                <h2>⚽ WCE</h2>
                 <p>Pts: <span id="score">0</span></p>
                 <p>Líneas: <span id="lines">0</span></p>
                 <p>Nv: <span id="level">1</span></p>
@@ -766,23 +730,17 @@
             <input type="text" id="playerNombreInput" class="score-input" maxlength="30" placeholder="Tu nombre" autocomplete="given-name" />
         </div>
         <p id="save-error-text" class="error-text" style="display:none;"></p>
-        <div class="save-score-actions">
-            <button id="submitScoreButton" class="action-button">Guardar</button>
-            <p id="save-loading-text" class="loading-text" style="display:none;">Guardando...</p>
-            <button id="saveScreenBackButton" class="action-button save-btn-secondary">Volver al Inicio</button>
-            <button id="saveScreenShareButton" class="link-button share-challenge-btn" style="margin-top:4px; display:none;">⚔️ Desafiá a tus compañeros</button>
-        </div>
+        <button id="submitScoreButton" class="action-button" style="margin-top:15px;">Guardar</button>
+        <p id="save-loading-text" class="loading-text" style="display:none;">Guardando...</p>
     </div>
 
     <div id="ranking-screen" class="screen">
         <h1>Ranking</h1>
-        <p id="newRecordMsg" style="display:none; font-size:1.2em; color:var(--color-gold); text-shadow:0 0 8px var(--color-gold); margin:0 0 8px 0;">🥳 ¡Nuevo Récord!</p>
         <ol id="ranking-list"></ol>
         <p id="ranking-loading" class="loading-text" style="display:none;">Cargando...</p>
         <div class="ranking-cta-stack">
             <button id="playAgainButton" class="action-button">Jugar de Nuevo</button>
-            <button id="rankingShareButton" class="link-button share-challenge-btn" style="display:none;">⚔️ Desafiá a tus compañeros</button>
-            <button id="customizeGameCTA" class="action-button cta-gold" style="display:none;">¡Llevá CyberTris a tu organización!</button>
+            <button id="customizeGameCTA" class="action-button cta-gold">¡Llevá CyberTris a tu organización!</button>
         </div>
     </div>
 
@@ -799,26 +757,6 @@
         </div>
     </div>
 
-
-    <div id="share-modal" style="display:none;">
-        <div class="share-backdrop"></div>
-        <div class="share-content">
-            <button class="share-close" id="shareModalClose" aria-label="Cerrar">×</button>
-            <p class="share-title">🎮 Desafiá a tus compañeros</p>
-            <p class="share-subtitle">Compartí el link y que empiece el duelo</p>
-            <div class="share-url-row">
-                <input type="text" id="shareUrlInput" class="share-url-input" readonly />
-                <button class="share-copy-btn" id="copyUrlButton">📋 Copiar</button>
-            </div>
-            <p class="share-copy-confirm" id="shareCopyConfirm">✅ ¡Link copiado!</p>
-            <a id="whatsappShareBtn" href="#" target="_blank" rel="noopener" class="whatsapp-btn">
-                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                Compartir por WhatsApp
-            </a>
-            <hr class="share-divider" />
-            <button id="shareScreenCTAButton" class="action-button cta-gold share-cta-btn">¡Llevá CyberTris a tu organización!</button>
-        </div>
-    </div>
 
     <div id="attackWarning" class="dynamic-message"></div>
     <div id="secureMessage" class="dynamic-message"></div>
@@ -865,7 +803,6 @@
         const finalScoreDisplay = document.getElementById('final-score-display');
         const saveErrorText = document.getElementById('save-error-text');
         const saveLoadingText = document.getElementById('save-loading-text');
-        let cachedRankingDocs = [];
         const rankingList = document.getElementById('ranking-list');
         const rankingLoading = document.getElementById('ranking-loading');
         const playAgainButton = document.getElementById('playAgainButton');
@@ -1321,7 +1258,7 @@
                 
             if (shouldDrawFirewall) {
                 const opacity = 0.2 + (Math.max(firewall.charges, 1) * 0.15);
-                context.fillStyle = `rgba(139, 111, 255, ${opacity})`;
+                context.fillStyle = `rgba(0, 255, 127, ${opacity})`;
                 for (let x = 0; x < COLS; x++) {
                     context.fillRect(x * BLOCK_SIZE, firewall.row * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
                 }
@@ -1730,10 +1667,19 @@
                 }
                 const powerUpIconHTML = `<img src="${ANTIVIRUS_IMAGE_URL}" class="final-bonus-icon">`;
                 
+                let recordText = '';
+                const scores = JSON.parse(localStorage.getItem('cybertrisScores')) || [];
+                scores.sort((a, b) => b.score - a.score);
+                
+                const isNewRecord = scores.length === 0 || finalScoreForRanking > scores[0].score;
+                if (isNewRecord) {
+                    recordText = '<p style="font-size: 1.2em; color: var(--color-gold);">¡Nuevo Récord! 🥳</p>';
+                }
+
                 const flagHTML = selectedCountry
                     ? `<div style="margin-bottom:6px;">${makeMiniFlag(selectedCountry.name, 'xl')}<span style="color:var(--color-gold); font-size:1.1em;">${selectedCountry.name}</span></div>`
                     : '';
-                messageText.innerHTML = `¡SISTEMA COMPROMETIDO!<br>Las defensas han caído.<br>${flagHTML}<span class="text-success">Puntaje: ${score}</span><br><span class="text-success">${powerUpIconHTML} ¡${finalPowerUpCount} Ataques Prevenidos!: +${powerUpBonus} ✨</span><br><span class="text-success">Puntaje Final: ${finalScoreForRanking}</span>`;
+                messageText.innerHTML = `¡SISTEMA COMPROMETIDO!<br>Las defensas han caído.<br>${flagHTML}${recordText}<span class="text-success">Puntaje: ${score}</span><br><span class="text-success">${powerUpIconHTML} ¡${finalPowerUpCount} Ataques Prevenidos!: +${powerUpBonus} ✨</span><br><span class="text-success">Puntaje Final: ${finalScoreForRanking}</span>`;
                 messageBox.className = ''; 
                 restartButton.style.display = 'inline-block';
                 saveScoreButton.style.display = 'inline-block';
@@ -1893,10 +1839,6 @@
                 saveErrorText.style.display = 'block';
                 return;
             }
-            if (finalScoreForRanking === 0) {
-                displayRanking();
-                return;
-            }
             if (!db) {
                 saveErrorText.textContent = 'Sin conexión a la base de datos.';
                 saveErrorText.style.display = 'block';
@@ -1971,94 +1913,93 @@
             document.getElementById('hubspot-modal').style.display = 'none';
         }
 
-        // === Share modal ===
-        function openShareModal() {
-            const modal = document.getElementById('share-modal');
-            const input = document.getElementById('shareUrlInput');
-            const url = 'https://cybertris.vercel.app/';
-            input.value = url;
-            const waText = encodeURIComponent('¡Te desafío a jugar CyberTris! ¿Podés superar mi puntaje? 🎮🛡️ ' + url);
-            document.getElementById('whatsappShareBtn').href = 'https://wa.me/?text=' + waText;
-            document.getElementById('shareCopyConfirm').classList.remove('visible');
-            modal.style.display = 'flex';
-        }
-        function closeShareModal() {
-            document.getElementById('share-modal').style.display = 'none';
-        }
-
-        function renderPersonasRanking(allDocs) {
-            const rankingList = document.getElementById('ranking-list');
-            rankingList.innerHTML = '';
-            const sortFn = (a, b) => {
-                const sa = Number(a.score) || 0, sb = Number(b.score) || 0;
-                if (sb !== sa) return sb - sa;
-                return (Number(b.durationMs) || 0) - (Number(a.durationMs) || 0);
-            };
-            const sorted = [...allDocs].sort(sortFn);
-            const topDocs = sorted.slice(0, 10);
-            const matchesSelf = (d) => lastPlayerEntry && (
-                d.id === lastPlayerEntry.id ||
-                (d.nombre === lastPlayerEntry.nombre &&
-                 Number(d.score) === Number(lastPlayerEntry.score) &&
-                 (d.country || '') === (lastPlayerEntry.country || ''))
-            );
-            let playerInTop = lastPlayerEntry ? topDocs.some(matchesSelf) : false;
-            if (lastPlayerEntry && !playerInTop) {
-                const selfDoc = { id: lastPlayerEntry.id || '__self__', nombre: lastPlayerEntry.nombre, score: lastPlayerEntry.score, durationMs: lastPlayerEntry.durationMs || 0, country: lastPlayerEntry.country, flag: lastPlayerEntry.flag };
-                const insertIdx = topDocs.findIndex(d => sortFn(selfDoc, d) < 0);
-                const shouldInsert = insertIdx !== -1 || topDocs.length < 10;
-                if (shouldInsert) {
-                    const idx = insertIdx === -1 ? topDocs.length : insertIdx;
-                    topDocs.splice(idx, 0, selfDoc);
-                    if (topDocs.length > 10) topDocs.length = 10;
-                    playerInTop = true;
-                }
-            }
-            let selfMarked = false;
-            const newRecordMsg = document.getElementById('newRecordMsg');
-            if (newRecordMsg && lastPlayerEntry && topDocs.length > 0 && matchesSelf(topDocs[0])) {
-                newRecordMsg.style.display = 'block';
-            }
-            topDocs.forEach((s, idx) => {
-                const li = document.createElement('li');
-                const flagPart = s.country ? makeMiniFlag(s.country, '') : '';
-                if (!selfMarked && matchesSelf(s)) { li.classList.add('rank-self'); selfMarked = true; }
-                li.innerHTML = `<span class="rank-name">${idx + 1}. ${flagPart}${s.nombre}</span><span class="rank-score">${s.score}</span>`;
-                rankingList.appendChild(li);
-            });
-            if (lastPlayerEntry && !playerInTop) {
-                const selfDoc = { score: lastPlayerEntry.score, durationMs: lastPlayerEntry.durationMs || 0 };
-                const better = allDocs.filter(d => sortFn(d, selfDoc) < 0).length;
-                const myRank = better + 1;
-                const li = document.createElement('li');
-                li.className = 'rank-self rank-self-divider-li';
-                const flagPart = lastPlayerEntry.country ? makeMiniFlag(lastPlayerEntry.country, '') : '';
-                li.innerHTML = `<span class="rank-name">${myRank}. ${flagPart}${lastPlayerEntry.nombre}</span><span class="rank-score">${lastPlayerEntry.score}</span>`;
-                rankingList.appendChild(li);
-            }
-        }
-
         async function displayRanking() {
             messageBox.style.display = 'none';
             saveScoreScreen.style.display = 'none';
             showScreen('ranking-screen');
-            document.getElementById('ranking-list').innerHTML = '';
-            document.getElementById('ranking-list').style.display = '';
+            rankingList.innerHTML = '';
             rankingLoading.style.display = 'block';
-            const newRecordMsg = document.getElementById('newRecordMsg');
-            if (newRecordMsg) newRecordMsg.style.display = 'none';
 
             try {
+                // Traemos un buffer mayor a 10 para poder desempatar localmente por duración
                 const snapshot = await db.collection(RANKING_COLLECTION)
-                    .orderBy('score', 'desc').limit(200).get();
+                    .orderBy('score', 'desc').limit(50).get();
                 rankingLoading.style.display = 'none';
-                cachedRankingDocs = [];
-                snapshot.forEach((doc) => { cachedRankingDocs.push({ id: doc.id, ...doc.data() }); });
-                renderPersonasRanking(cachedRankingDocs);
+                rankingList.innerHTML = '';
+
+                const allDocs = [];
+                snapshot.forEach((doc) => {
+                    allDocs.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Orden: score desc, luego durationMs desc (mayor tiempo = mejor posición en empate)
+                const sortFn = (a, b) => {
+                    const sa = Number(a.score) || 0;
+                    const sb = Number(b.score) || 0;
+                    if (sb !== sa) return sb - sa;
+                    return (Number(b.durationMs) || 0) - (Number(a.durationMs) || 0);
+                };
+                allDocs.sort(sortFn);
+                const topDocs = allDocs.slice(0, 10);
+
+                const matchesSelf = (d) => lastPlayerEntry && (
+                    d.id === lastPlayerEntry.id ||
+                    (d.nombre === lastPlayerEntry.nombre &&
+                     Number(d.score) === Number(lastPlayerEntry.score) &&
+                     (d.country || '') === (lastPlayerEntry.country || ''))
+                );
+
+                let playerInTop = lastPlayerEntry ? topDocs.some(matchesSelf) : false;
+
+                // Si el jugador no está en el top pero su puntaje (+duración) califica, lo insertamos local
+                if (lastPlayerEntry && !playerInTop) {
+                    const selfDoc = {
+                        id: lastPlayerEntry.id || '__self__',
+                        nombre: lastPlayerEntry.nombre,
+                        apellido: '',
+                        score: lastPlayerEntry.score,
+                        durationMs: lastPlayerEntry.durationMs || 0,
+                        country: lastPlayerEntry.country,
+                        flag: lastPlayerEntry.flag
+                    };
+                    const insertIdx = topDocs.findIndex(d => sortFn(selfDoc, d) < 0);
+                    const shouldInsert = insertIdx !== -1 || topDocs.length < 10;
+                    if (shouldInsert) {
+                        const idx = insertIdx === -1 ? topDocs.length : insertIdx;
+                        topDocs.splice(idx, 0, selfDoc);
+                        if (topDocs.length > 10) topDocs.length = 10;
+                        playerInTop = true;
+                    }
+                }
+
+                let selfMarked = false;
+                topDocs.forEach((s, idx) => {
+                    const li = document.createElement('li');
+                    const flagPart = s.country ? makeMiniFlag(s.country, '') : '';
+                    if (!selfMarked && matchesSelf(s)) {
+                        li.classList.add('rank-self');
+                        selfMarked = true;
+                    }
+                    li.innerHTML = `<span class="rank-name">${idx + 1}. ${flagPart}${s.nombre} ${s.apellido || ''}</span><span class="rank-score">${s.score}</span>`;
+                    rankingList.appendChild(li);
+                });
+
+                if (lastPlayerEntry && !playerInTop) {
+                    // Calcular rank real considerando empates por duración
+                    const selfDoc = {
+                        score: lastPlayerEntry.score,
+                        durationMs: lastPlayerEntry.durationMs || 0
+                    };
+                    const better = allDocs.filter(d => sortFn(d, selfDoc) < 0).length;
+                    const myRank = better + 1;
+                    const li = document.createElement('li');
+                    li.className = 'rank-self';
+                    const flagPart = lastPlayerEntry.country ? makeMiniFlag(lastPlayerEntry.country, '') : '';
+                    li.innerHTML = `<span class="rank-name">${myRank}. ${flagPart}${lastPlayerEntry.nombre}</span><span class="rank-score">${lastPlayerEntry.score}</span>`;
+                    rankingList.appendChild(li);
+                }
             } catch(e) {
-                rankingLoading.style.display = 'none';
                 rankingLoading.textContent = 'Error al cargar el ranking.';
-                rankingLoading.style.display = 'block';
             }
             updateMenuButtons();
         }
@@ -2093,8 +2034,7 @@
         
         function updateMenuButtons() {
             // Limpiar TODAS las selecciones anteriores de TODOS los botones posibles
-            [startGameButton, viewRankingButton, confirmCountryButton, restartButton, saveScoreButton, resumeButton, submitScoreButton, playAgainButton,
-             document.getElementById('saveScreenBackButton')].forEach(btn => {
+            [startGameButton, viewRankingButton, confirmCountryButton, restartButton, saveScoreButton, resumeButton, submitScoreButton, playAgainButton].forEach(btn => {
                 if (btn) btn.classList.remove('gamepad-selected');
             });
 
@@ -2110,8 +2050,7 @@
                 if (saveScoreButton.style.display !== 'none') currentMenuButtons.push(saveScoreButton);
                 if (resumeButton.style.display !== 'none') currentMenuButtons.push(resumeButton);
             } else if (isScreenVisible(saveScoreScreen)) {
-                currentMenuButtons = [submitScoreButton,
-                    document.getElementById('saveScreenBackButton')];
+                currentMenuButtons = [submitScoreButton];
             } else if (isScreenVisible(rankingScreen)) {
                 currentMenuButtons = [playAgainButton];
             }
@@ -2342,26 +2281,9 @@
             saveScoreButton.addEventListener('click', showSaveScoreScreen);
             submitScoreButton.addEventListener('click', saveScore);
             playAgainButton.addEventListener('click', returnToStartScreen);
-            document.getElementById('saveScreenBackButton').addEventListener('click', returnToStartScreen);
-            document.getElementById('saveScreenShareButton').addEventListener('click', openShareModal);
-            document.getElementById('rankingShareButton').addEventListener('click', openShareModal);
             document.getElementById('customizeGameCTA').addEventListener('click', openHubspotModal);
             document.getElementById('hubspotModalClose').addEventListener('click', closeHubspotModal);
             document.querySelector('#hubspot-modal .hs-modal-backdrop').addEventListener('click', closeHubspotModal);
-
-            // Share modal
-            document.getElementById('shareButton').addEventListener('click', openShareModal);
-            document.getElementById('shareModalClose').addEventListener('click', closeShareModal);
-            document.querySelector('#share-modal .share-backdrop').addEventListener('click', closeShareModal);
-            document.getElementById('shareScreenCTAButton').addEventListener('click', () => { closeShareModal(); openHubspotModal(); });
-            document.getElementById('copyUrlButton').addEventListener('click', () => {
-                const input = document.getElementById('shareUrlInput');
-                input.select(); input.setSelectionRange(0, 99999);
-                navigator.clipboard.writeText(input.value).catch(() => document.execCommand('copy'));
-                const confirm = document.getElementById('shareCopyConfirm');
-                confirm.classList.add('visible');
-                setTimeout(() => confirm.classList.remove('visible'), 2500);
-            });
 
             resumeButton.addEventListener('click', togglePause);
             
