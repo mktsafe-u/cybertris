@@ -30,25 +30,25 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
-            --color-primary: #6c4fd8;
-            --color-secondary: #1a1145;
-            --color-tertiary-dark-blue: #150d38;
-            --color-tertiary-bright-blue: #7b5fff;
-            --color-tertiary-neon: #a78bff;
+            --color-primary: #2547ff;
+            --color-secondary: #0c1444;
+            --color-tertiary-dark-blue: #070c26;
+            --color-tertiary-bright-blue: #4f6dff;
+            --color-tertiary-neon: #33e18d;
             --color-danger: #FF3B6B;
             --color-gold: #FFD700;
             --color-gold-shine: #FFFACD;
-            --color-success: #9d7bff;
+            --color-success: #33e18d;
             --color-piece-s-green: #4a2f9e;
             --color-text-on-danger: #FFFFFF;
-            --color-firewall: #8b6fff;
+            --color-firewall: #2547ff;
             --wc-gold: #FFD700;
             --wc-gold-dim: rgba(255, 215, 0, 0.12);
-            --wc-overlay: rgba(20, 12, 48, 0.82);
+            --wc-overlay: rgba(6, 10, 34, 0.82);
         }
         body {
             font-family: 'VT323', monospace;
-            background-color: #14092e;
+            background-color: #0a1030;
             background-image: url('fondo_cancha.png');
             background-size: cover;
             background-position: center;
@@ -129,7 +129,7 @@
             outline: none;
         }
         #start-screen .logo-container { margin-bottom: 10px; }
-        #start-screen .logo-container img { max-height: 76px; border-radius: 8px; }
+        #start-screen .logo-container img { max-height: 38px; border-radius: 8px; }
         .intro-section { display: flex; align-items: center; justify-content: flex-start; gap: 12px; margin-bottom: 18px; font-size: 1.35em; width: 88%; align-self: flex-start; margin-left: 6%; }
         .intro-section:last-of-type { margin-bottom: 8px; }
         .intro-section svg, .intro-section .intro-icon-img, .intro-section .intro-icon-emoji { width: 26px; height: 26px; flex-shrink: 0; object-fit: contain; display: flex; align-items: center; justify-content: center; font-size: 1.3em; line-height: 1; }
@@ -148,7 +148,7 @@
             padding: 8px;
             border: 3px solid var(--color-tertiary-neon);
             border-radius: 15px;
-            background-color: rgba(26, 17, 69, 0.7);
+            background-color: rgba(12, 20, 68, 0.7);
             box-shadow: 0 0 20px var(--color-tertiary-neon), inset 0 0 10px var(--color-tertiary-neon);
             width: 100%;
             max-width: 95vw;
@@ -171,7 +171,7 @@
             flex-wrap: wrap;
             gap: 4px;
             padding: 5px 10px;
-            background-color: rgba(21, 13, 56, 0.85);
+            background-color: rgba(7, 12, 38, 0.85);
             border-radius: 8px;
             border: 1px solid var(--color-tertiary-neon);
             width: 100%;
@@ -214,7 +214,7 @@
             right: 0;
             width: 60px; height: 60px;
             border-radius: 50%;
-            background: rgba(21, 13, 56, 0.22);
+            background: rgba(7, 12, 38, 0.22);
             -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             border: 2px solid var(--color-tertiary-neon);
@@ -227,7 +227,7 @@
             box-shadow: 0 0 12px var(--color-tertiary-neon);
         }
         #rotateButton:active, #rotateButton.pressed {
-            background: rgba(108, 79, 216, 0.45);
+            background: rgba(37, 71, 255, 0.45);
             transform: scale(0.92);
         }
         .rotate-icon { width: 55%; height: 55%; }
@@ -303,7 +303,7 @@
 
         #message-box, #save-score-screen {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background-color: rgba(21, 13, 56, 0.95); padding: 24px 22px; border-radius: 10px;
+            background-color: rgba(7, 12, 38, 0.95); padding: 24px 22px; border-radius: 10px;
             text-align: center; z-index: 1000; font-size: 1.4em; line-height: 1.4;
             border: 2px solid var(--color-danger); box-shadow: 0 0 20px var(--color-danger);
             color: var(--color-danger);
@@ -343,12 +343,12 @@
         .error-text { color: var(--color-danger); font-size: 1.1em; margin-top: 8px; }
 
         #ranking-list { list-style: none; padding: 0; margin-top: 8px; width: 100%; max-width: 400px; }
-        #ranking-list li { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; margin-bottom: 5px; background-color: rgba(21, 13, 56, 0.5); border-radius: 5px; font-size: 1.2em; }
-        #ranking-list li:nth-child(odd) { background-color: rgba(21, 13, 56, 0.8); }
+        #ranking-list li { display: flex; justify-content: space-between; align-items: center; padding: 5px 10px; margin-bottom: 5px; background-color: rgba(7, 12, 38, 0.5); border-radius: 5px; font-size: 1.2em; }
+        #ranking-list li:nth-child(odd) { background-color: rgba(7, 12, 38, 0.8); }
         #ranking-list .rank-name { text-align: left; }
         /* ── Share modal ──────────────────────────────── */
         #share-modal { position: fixed; inset: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
-        #share-modal .share-backdrop { position: absolute; inset: 0; background: rgba(20, 12, 48, 0.88); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+        #share-modal .share-backdrop { position: absolute; inset: 0; background: rgba(6, 10, 34, 0.88); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
         .share-content {
             position: relative; background: var(--color-secondary); border: 2px solid var(--color-tertiary-neon);
             border-radius: 14px; box-shadow: 0 0 24px var(--color-tertiary-neon);
@@ -378,7 +378,7 @@
         .dynamic-message {
             position: fixed; display: none; font-size: 1.8em;
             text-shadow: 1px 1px 0px var(--color-secondary), -1px -1px 0px var(--color-secondary), 1px -1px 0px var(--color-secondary), -1px 1px 0px var(--color-secondary);
-            z-index: 2000; padding: 8px 15px; background-color: rgba(26, 17, 69, 0.6);
+            z-index: 2000; padding: 8px 15px; background-color: rgba(12, 20, 68, 0.6);
             border-radius: 8px; pointer-events: none;
         }
         #attackWarning {
@@ -434,7 +434,7 @@
             margin-bottom: 14px;
         }
         .wheel-arrow {
-            background: rgba(108, 79, 216, 0.4);
+            background: rgba(37, 71, 255, 0.4);
             color: var(--color-gold);
             border: 2px solid var(--color-gold);
             border-radius: 50%;
@@ -457,7 +457,7 @@
             overflow: hidden;
             border: 2px solid var(--color-primary);
             border-radius: 12px;
-            background: rgba(21, 13, 56, 0.55);
+            background: rgba(7, 12, 38, 0.55);
             box-shadow: inset 0 0 14px rgba(0,0,0,0.6);
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
                     mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 72%, transparent 100%);
@@ -492,7 +492,7 @@
         .wheel-item .wn {
             font-size: 1.4em;
             color: #FFFFFF;
-            text-shadow: 0 0 6px #a78bff;
+            text-shadow: 0 0 6px #33e18d;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -511,7 +511,7 @@
         }
         .wheel-item.active {
             border-color: var(--color-gold);
-            background: rgba(108, 79, 216, 0.22);
+            background: rgba(37, 71, 255, 0.22);
             box-shadow: 0 0 16px rgba(255,215,0,0.5), 0 0 28px rgba(255,215,0,0.3);
             transform: scale(1.04);
         }
@@ -606,7 +606,7 @@
         }
         .hs-modal-backdrop {
             position: absolute; inset: 0;
-            background: rgba(20, 12, 48, 0.85);
+            background: rgba(6, 10, 34, 0.85);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
         }
@@ -676,7 +676,7 @@
         #hubspot-form-container select {
             font-family: 'VT323', monospace;
             font-size: 1em;
-            color: #14092e;
+            color: #0a1030;
             background: #ffffff;
         }
         .mini-flag.xl {
@@ -1321,7 +1321,7 @@
                 
             if (shouldDrawFirewall) {
                 const opacity = 0.2 + (Math.max(firewall.charges, 1) * 0.15);
-                context.fillStyle = `rgba(139, 111, 255, ${opacity})`;
+                context.fillStyle = `rgba(37, 71, 255, ${opacity})`;
                 for (let x = 0; x < COLS; x++) {
                     context.fillRect(x * BLOCK_SIZE, firewall.row * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
                 }
